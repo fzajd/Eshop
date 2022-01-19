@@ -79,7 +79,7 @@ class ProductType extends AbstractType
                     'Enfant'=>'Enfant'
                 ]
             ])
-            ->add('Enregister', SubmitType::class)
+            ->add('Enregistrer', SubmitType::class)
         ;
     }
 

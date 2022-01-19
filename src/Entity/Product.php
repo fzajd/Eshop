@@ -37,8 +37,6 @@ class Product
      */
     private $price;
 
-
-
     /**
      * @ORM\Column(type="string", length=55)
      */
