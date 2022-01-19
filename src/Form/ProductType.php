@@ -72,6 +72,7 @@ class ProductType extends AbstractType
             ->add('gender', ChoiceType::class,[
                 'required'=>false,
                 'label'=>false,
+                'placeholder'=>'Choisissez une option',
                 'choices'=>[
                     'Homme'=>'Homme',
                     'Femme'=>'Femme',
