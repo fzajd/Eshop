@@ -19,76 +19,150 @@ class ProductType extends AbstractType
 {
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
-        $builder
-            ->add('title', TextType::class, [
-                'required'=>false,
-                'label'=>false,
-                'attr'=>[
-                    'placeholder'=>'Saisir le nom du produit'
-                ]
 
-            ] )
-            ->add('reference', TextType::class, [
-                'required'=>false,
-                'label'=>false,
-                'attr'=>[
-                    'placeholder'=>'Saisir la référence du produit'
-                ]
+        if ($options['add'] == true):
 
-            ])
-            ->add('description', TextareaType::class,[
-                'required'=>false,
-                'label'=>false
-            ])
-            ->add('price', NumberType::class, [
-                'required'=>false,
-                'label'=>false,
-                'invalid_message'=>'Le type est incorrect',
-                'attr'=>[
-                    'placeholder'=>'Saisir le prix du produit'
-                ]
-            ])
-            ->add('picture',FileType::class, [
-                'required'=>false,
-                'label'=>false,
-                'constraints'=>[
-                    new File([
-                       'mimeTypes'=>[
-                           "image/png",
-                           "image/jpg",
-                           "image/jpeg"
-                       ],
-                       'mimeTypesMessage'=> 'Extensions autorisées: PNG, JPG, JPEG'
-                    ])
-                ]
+            $builder
+                ->add('title', TextType::class, [
+                    'required' => false,
+                    'label' => false,
+                    'attr' => [
+                        'placeholder' => 'Saisir le nom du produit'
+                    ]
 
-            ])
-            ->add('brand', TextType::class, [
-                'required'=>false,
-                'label'=>false,
-                'attr'=>[
-                    'placeholder'=>'Saisir la marque du produit'
-                ]
+                ])
+                ->add('reference', TextType::class, [
+                    'required' => false,
+                    'label' => false,
+                    'attr' => [
+                        'placeholder' => 'Saisir la référence du produit'
+                    ]
 
-            ])
-            ->add('gender', ChoiceType::class,[
-                'required'=>false,
-                'label'=>false,
-                'placeholder'=>'Choisissez une option',
-                'choices'=>[
-                    'Homme'=>'Homme',
-                    'Femme'=>'Femme',
-                    'Enfant'=>'Enfant'
-                ]
-            ])
-            ->add('Enregistrer', SubmitType::class)
-        ;
+                ])
+                ->add('description', TextareaType::class, [
+                    'required' => false,
+                    'label' => false
+                ])
+                ->add('price', NumberType::class, [
+                    'required' => false,
+                    'label' => false,
+                    'invalid_message' => 'Le type est incorrect',
+                    'attr' => [
+                        'placeholder' => 'Saisir le prix du produit'
+                    ]
+                ])
+                ->add('picture', FileType::class, [
+                    'required' => false,
+                    'label' => false,
+                    'constraints' => [
+                        new File([
+                            'mimeTypes' => [
+                                "image/png",
+                                "image/jpg",
+                                "image/jpeg"
+                            ],
+                            'mimeTypesMessage' => 'Extensions autorisées: PNG, JPG, JPEG'
+                        ])
+                    ]
+
+                ])
+                ->add('brand', TextType::class, [
+                    'required' => false,
+                    'label' => false,
+                    'attr' => [
+                        'placeholder' => 'Saisir la marque du produit'
+                    ]
+
+                ])
+                ->add('gender', ChoiceType::class, [
+                    'required' => false,
+                    'label' => false,
+                    'placeholder' => 'Choisissez une option',
+                    'choices' => [
+                        'Homme' => 'Homme',
+                        'Femme' => 'Femme',
+                        'Enfant' => 'Enfant'
+                    ]
+                ])
+                ->add('Enregistrer', SubmitType::class);
+
+        elseif ($options['edit'] == true):
+
+            $builder
+                ->add('title', TextType::class, [
+                    'required' => false,
+                    'label' => false,
+                    'attr' => [
+                        'placeholder' => 'Saisir le nom du produit'
+                    ]
+
+                ])
+                ->add('reference', TextType::class, [
+                    'required' => false,
+                    'label' => false,
+                    'attr' => [
+                        'placeholder' => 'Saisir la référence du produit'
+                    ]
+
+                ])
+                ->add('description', TextareaType::class, [
+                    'required' => false,
+                    'label' => false
+                ])
+                ->add('price', NumberType::class, [
+                    'required' => false,
+                    'label' => false,
+                    'invalid_message' => 'Le type est incorrect',
+                    'attr' => [
+                        'placeholder' => 'Saisir le prix du produit'
+                    ]
+                ])
+                ->add('editPicture', FileType::class, [
+                    'required' => false,
+                    'label' => false,
+                    'constraints' => [
+                        new File([
+                            'mimeTypes' => [
+                                "image/png",
+                                "image/jpg",
+                                "image/jpeg"
+                            ],
+                            'mimeTypesMessage' => 'Extensions autorisées: PNG, JPG, JPEG'
+                        ])
+                    ]
+
+                ])
+                ->add('brand', TextType::class, [
+                    'required' => false,
+                    'label' => false,
+                    'attr' => [
+                        'placeholder' => 'Saisir la marque du produit'
+                    ]
+
+                ])
+                ->add('gender', ChoiceType::class, [
+                    'required' => false,
+                    'label' => false,
+                    'placeholder' => 'Choisissez une option',
+                    'choices' => [
+                        'Homme' => 'Homme',
+                        'Femme' => 'Femme',
+                        'Enfant' => 'Enfant'
+                    ]
+                ])
+                ->add('Enregistrer', SubmitType::class);
+
+        endif;
+
+
     }
 
     public function configureOptions(OptionsResolver $resolver): void
     {
         $resolver->setDefaults([
             'data_class' => Product::class,
+            'add'=>false,
+            'edit'=>false
         ]);
     }
 }

@@ -1,0 +1,70 @@
+{% extends 'base.html.twig' %}
+{% block title %}
+    {{ parent() }}{{ titre }}
+{% endblock %}
+
+{% block titre %}
+    {{ titre }}
+{% endblock %}
+
+
+
+{% block body %}
+
+    <div class="pb-5">
+        {{ form_start(form) }}
+
+        <label for="">Titre</label>
+        {{ form_row(form.title) }}
+
+        <label for="">Prix</label>
+        {{ form_row(form.price) }}
+
+        <label for="">Référence</label>
+        {{ form_row(form.reference) }}
+
+        <label for="">Description</label>
+        {{ form_row(form.description, { 'attr':{'placeholder':'veuillez saisir le texte'}}) }}
+
+
+        <label for="">Marque</label>
+        {{ form_row(form.brand) }}
+
+        <label for="">Section</label>
+        {{ form_widget(form.gender) }}
+
+        <label for="">Photo</label>
+        {{ form_row(form.editPicture, { 'attr': { 'onChange': "loadFile(event)"}  }) }}
+        <div class="row justify-content-between">
+            <div class="col-md-5 text-center">
+                <img id="image" width="300">
+            </div>
+            <div class="col-md-5 text-center">
+                <img src="{{ asset('upload/') }}{{ product.picture }}" width="300">
+            </div>
+        </div>
+        <div class="mt-3">
+            {{ form_row(form.Enregistrer) }}
+        </div>
+        {{ form_end(form) }}
+
+    </div>
+
+
+
+
+
+    <script>
+        var loadFile = function (event) {
+            var image = document.getElementById('image');
+
+            image.src = URL.createObjectURL(event.target.files[0]);
+        };
+    </script>
+
+
+{% endblock %}
+
+
+
+

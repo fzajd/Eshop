@@ -59,6 +59,9 @@ class Product
      */
     private $brand;
 
+
+    public $editPicture;
+
     /**
      * @ORM\Column(type="string", length=255, columnDefinition="enum('Homme', 'Femme', 'Enfant')")
      * @Assert\NotBlank(message="Veuillez saisir ce champs")

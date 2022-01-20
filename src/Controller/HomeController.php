@@ -45,7 +45,7 @@ class HomeController extends AbstractController
         $product = new Product();
 
         // Nous avons créé une classe ProductType qui permet de générer le formulaire d'ajout de produit, il faut dans le controller importer cette classe et relier le formulaire à notre instanciation d'entité product
-        $form = $this->createForm(ProductType::class, $product);
+        $form = $this->createForm(ProductType::class, $product, ['add'=>true]);
         // on va chercher dans l'objet handlerequest qui permet de récupérer chaques données saisies des champs de formulaire. Il s'assure de la coordination entre ProductType et $product afin de générer les bons setteurs pour chaques propriétés de l'entité;
         // Les données de formulaire transitant en POST il nous appeler la classe REQUEST (de http\foundation) qui permet de véhiculer les informations des superglobales ($_GET, $_POST, $_COOKIE....)
         $form->handleRequest($request);
@@ -108,6 +108,12 @@ class HomeController extends AbstractController
 
         ]);
     }
+    
+
+
+
+
+
 
     /**
      * @Route("/listProduct", name="listProduct")
@@ -120,6 +126,86 @@ class HomeController extends AbstractController
         return $this->render('home/listProduct.html.twig',[
             'products'=>$products
         ]);
+    }
+
+    /**
+    *@Route("/editProduct/{id}", name="editProduct")
+    *
+    */
+    public function editProduct(Request $request, EntityManagerInterface $manager, Product $product){
+
+        // la différence entre l'ajout et la modification:
+        // -en ajout=> $product est instancié (new product()) et vide par conséquent
+        // -en modification=> $product est rempli de ses données présentes en BDD
+        // lorsque l'on passe un id en parametre d'une route, si l'entité correspondante à cette id
+        // est injectée en dépendance, symfony rempli par lui même l'objet $product
+
+        $form = $this->createForm(ProductType::class, $product, ['edit'=>true]);
+
+        $form->handleRequest($request);
+
+
+
+        if ($form->isSubmitted() && $form->isValid()):
+
+            $file = $form->get('editPicture')->getData();
+
+            if ($file):
+
+                $fileName=date('YmdHis').'-'.uniqid().'-'.$file->getClientOriginalName();
+
+                try {
+                    $file->move($this->getParameter('upload_directory'), $fileName);
+                    unlink($this->getParameter('upload_directory').'/'.$product->getPicture());
+
+
+                }
+                catch (FileException $exception){
+                    $this->redirectToRoute('editProduct', [
+                        'erreur'=>$exception
+                    ]);
+                }
+
+
+                $product->setPicture($fileName);
+
+
+            endif;
+
+            $manager->persist($product);
+
+
+            $manager->flush();
+
+            $this->addFlash('success', 'Le produit a bien été modifié');
+
+
+            return $this->redirectToRoute('listProduct');
+
+        endif;
+
+
+        return $this->render('home/editProduct.html.twig', [
+            'form' => $form->createView(),
+            'titre' => 'Modification de produit',
+            'product'=>$product
+
+        ]);
+
+    }
+
+    /**
+    *@Route("/deleteProduct/{id}", name="deleteProduct")
+    *
+    */
+    public function deleteProduct(EntityManagerInterface $manager, Product $product){
+
+        unlink($this->getParameter('upload_directory').'/'.$product->getPicture());
+        $manager->remove($product);
+        $manager->flush();
+
+        $this->addFlash('success', 'Le produit a bien été supprimé');
+        return $this->redirectToRoute('listProduct');
     }
 
 
