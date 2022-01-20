@@ -13,6 +13,7 @@ use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Validator\Constraints\File;
+use Symfony\Component\Validator\Constraints\Type;
 
 class ProductType extends AbstractType
 {
@@ -42,6 +43,7 @@ class ProductType extends AbstractType
             ->add('price', NumberType::class, [
                 'required'=>false,
                 'label'=>false,
+                'invalid_message'=>'Le type est incorrect',
                 'attr'=>[
                     'placeholder'=>'Saisir le prix du produit'
                 ]

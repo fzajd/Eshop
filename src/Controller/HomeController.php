@@ -4,6 +4,7 @@ namespace App\Controller;
 
 use App\Entity\Product;
 use App\Form\ProductType;
+use App\Repository\ProductRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\File\Exception\FileException;
@@ -16,10 +17,19 @@ class HomeController extends AbstractController
     /**
      * @Route("/", name="home")
      */
-    public function home(): Response
+    public function home(ProductRepository $repository): Response
     {
-        return $this->render('home/home.html.twig', [
+        // Ici nous allons récupérer l'intégralité des produit enregistrés en BDD
+        // requete de select * FROM product.
+        // Pour les requêtes de SELECT il nous faut injecter en dépandance le repository de product
+        // ProductRepository et utiliser sa méthode findAll() présente d'origine
+        $products=$repository->findAll();
 
+
+
+
+        return $this->render('home/home.html.twig', [
+            'products'=>$products
         ]);
     }
 
@@ -98,6 +108,23 @@ class HomeController extends AbstractController
 
         ]);
     }
+
+    /**
+     * @Route("/listProduct", name="listProduct")
+     */
+    public function listProduct(ProductRepository $repository)
+    {
+        $products=$repository->findAll();
+
+
+        return $this->render('home/listProduct.html.twig',[
+            'products'=>$products
+        ]);
+    }
+
+
+
+
 
 
 }

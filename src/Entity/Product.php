@@ -4,6 +4,7 @@ namespace App\Entity;
 
 use App\Repository\ProductRepository;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Validator\Constraints as Assert;
 
 /**
  * @ORM\Entity(repositoryClass=ProductRepository::class)
@@ -17,13 +18,18 @@ class Product
      */
     private $id;
 
+
     /**
      * @ORM\Column(type="string", length=255)
+     * @Assert\NotBlank(message="Veuillez saisir ce champs")
+     * @Assert\Length(min=3, max=15, minMessage="Le titre doit contenir un minimum de {{ limit }} caractères",  maxMessage="Le titre doit contenir un maximum de {{ limit }} caractères" )
+     *
      */
     private $title;
 
     /**
      * @ORM\Column(type="string", length=255)
+     * @Assert\NotBlank(message="Veuillez saisir ce champs")
      */
     private $reference;
 
@@ -34,21 +40,29 @@ class Product
 
     /**
      * @ORM\Column(type="float")
+     *
+     * @Assert\NotBlank(message="Veuillez saisir ce champs")
+     *
+     * @Assert\Positive(message="Lavaleur doit être supérieur à 0")
      */
     private $price;
 
     /**
      * @ORM\Column(type="string", length=55)
+     * @Assert\NotBlank(message="Veuillez saisir ce champs")
      */
     private $picture;
 
     /**
      * @ORM\Column(type="string", length=255)
+     * @Assert\NotBlank(message="Veuillez saisir ce champs")
      */
     private $brand;
 
     /**
      * @ORM\Column(type="string", length=255, columnDefinition="enum('Homme', 'Femme', 'Enfant')")
+     * @Assert\NotBlank(message="Veuillez saisir ce champs")
+     *
      */
     private $gender;
 
