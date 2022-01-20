@@ -77,6 +77,10 @@ class HomeController extends AbstractController
                 // on execute la ou les requêtes
                 $manager->flush();
 
+                $this->addFlash('success', 'Le produit a bien été enregistré');
+
+
+                return $this->redirectToRoute('home');
 
 
 
