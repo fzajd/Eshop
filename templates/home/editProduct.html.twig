@@ -1,4 +1,6 @@
-{% extends 'base.html.twig' %}
+{% extends 'panelAdmin.html.twig' %}
+
+
 {% block title %}
     {{ parent() }}{{ titre }}
 {% endblock %}
@@ -29,6 +31,10 @@
 
         <label for="">Marque</label>
         {{ form_row(form.brand) }}
+
+
+        <label for="">Catégorie</label>
+        {{ form_row(form.category) }}
 
         <label for="">Section</label>
         {{ form_widget(form.gender) }}

@@ -48,7 +48,7 @@ class Product
     private $price;
 
     /**
-     * @ORM\Column(type="string", length=55)
+     * @ORM\Column(type="string", length=255)
      * @Assert\NotBlank(message="Veuillez saisir ce champs")
      */
     private $picture;
@@ -68,6 +68,11 @@ class Product
      *
      */
     private $gender;
+
+    /**
+     * @ORM\ManyToOne(targetEntity=Category::class, inversedBy="product")
+     */
+    private $category;
 
     public function getId(): ?int
     {
@@ -154,6 +159,18 @@ class Product
     public function setGender(string $gender): self
     {
         $this->gender = $gender;
+
+        return $this;
+    }
+
+    public function getCategory(): ?Category
+    {
+        return $this->category;
+    }
+
+    public function setCategory(?Category $category): self
+    {
+        $this->category = $category;
 
         return $this;
     }

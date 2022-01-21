@@ -2,8 +2,11 @@
 
 namespace App\Controller;
 
+use App\Entity\Category;
 use App\Entity\Product;
+use App\Form\CategoryType;
 use App\Form\ProductType;
+use App\Repository\CategoryRepository;
 use App\Repository\ProductRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -23,13 +26,11 @@ class HomeController extends AbstractController
         // requete de select * FROM product.
         // Pour les requêtes de SELECT il nous faut injecter en dépandance le repository de product
         // ProductRepository et utiliser sa méthode findAll() présente d'origine
-        $products=$repository->findAll();
-
-
+        $products = $repository->findAll();
 
 
         return $this->render('home/home.html.twig', [
-            'products'=>$products
+            'products' => $products
         ]);
     }
 
@@ -45,7 +46,7 @@ class HomeController extends AbstractController
         $product = new Product();
 
         // Nous avons créé une classe ProductType qui permet de générer le formulaire d'ajout de produit, il faut dans le controller importer cette classe et relier le formulaire à notre instanciation d'entité product
-        $form = $this->createForm(ProductType::class, $product, ['add'=>true]);
+        $form = $this->createForm(ProductType::class, $product, ['add' => true]);
         // on va chercher dans l'objet handlerequest qui permet de récupérer chaques données saisies des champs de formulaire. Il s'assure de la coordination entre ProductType et $product afin de générer les bons setteurs pour chaques propriétés de l'entité;
         // Les données de formulaire transitant en POST il nous appeler la classe REQUEST (de http\foundation) qui permet de véhiculer les informations des superglobales ($_GET, $_POST, $_COOKIE....)
         $form->handleRequest($request);
@@ -60,9 +61,9 @@ class HomeController extends AbstractController
             // ici on place une condition pour vérifier qu'une photo a bien été uploadée
             if ($file):
 
-                $fileName=date('YmdHis').'-'.uniqid().'-'.$file->getClientOriginalName();
+                $fileName = date('YmdHis') . '-' . uniqid() . '-' . $file->getClientOriginalName();
 
-              // envoie dans public/upload
+                // envoie dans public/upload
 
                 try {
                     $file->move($this->getParameter('upload_directory'), $fileName);
@@ -71,10 +72,9 @@ class HomeController extends AbstractController
                     //   upload_directory : '%kernel.project_dir%/public/upload'
                     // param2 : le nom du fichier à déplacer
 
-                }
-                catch (FileException $exception){
+                } catch (FileException $exception) {
                     $this->redirectToRoute('addProduct', [
-                        'erreur'=>$exception
+                        'erreur' => $exception
                     ]);
                 }
 
@@ -93,9 +93,6 @@ class HomeController extends AbstractController
                 return $this->redirectToRoute('home');
 
 
-
-
-
             endif;
 
 
@@ -108,11 +105,6 @@ class HomeController extends AbstractController
 
         ]);
     }
-    
-
-
-
-
 
 
     /**
@@ -120,19 +112,20 @@ class HomeController extends AbstractController
      */
     public function listProduct(ProductRepository $repository)
     {
-        $products=$repository->findAll();
+        $products = $repository->findAll();
 
 
-        return $this->render('home/listProduct.html.twig',[
-            'products'=>$products
+        return $this->render('home/listProduct.html.twig', [
+            'products' => $products
         ]);
     }
 
     /**
-    *@Route("/editProduct/{id}", name="editProduct")
-    *
-    */
-    public function editProduct(Request $request, EntityManagerInterface $manager, Product $product){
+     * @Route("/editProduct/{id}", name="editProduct")
+     *
+     */
+    public function editProduct(Request $request, EntityManagerInterface $manager, Product $product)
+    {
 
         // la différence entre l'ajout et la modification:
         // -en ajout=> $product est instancié (new product()) et vide par conséquent
@@ -140,10 +133,9 @@ class HomeController extends AbstractController
         // lorsque l'on passe un id en parametre d'une route, si l'entité correspondante à cette id
         // est injectée en dépendance, symfony rempli par lui même l'objet $product
 
-        $form = $this->createForm(ProductType::class, $product, ['edit'=>true]);
+        $form = $this->createForm(ProductType::class, $product, ['edit' => true]);
 
         $form->handleRequest($request);
-
 
 
         if ($form->isSubmitted() && $form->isValid()):
@@ -152,17 +144,16 @@ class HomeController extends AbstractController
 
             if ($file):
 
-                $fileName=date('YmdHis').'-'.uniqid().'-'.$file->getClientOriginalName();
+                $fileName = date('YmdHis') . '-' . uniqid() . '-' . $file->getClientOriginalName();
 
                 try {
                     $file->move($this->getParameter('upload_directory'), $fileName);
-                    unlink($this->getParameter('upload_directory').'/'.$product->getPicture());
+                    unlink($this->getParameter('upload_directory') . '/' . $product->getPicture());
 
 
-                }
-                catch (FileException $exception){
+                } catch (FileException $exception) {
                     $this->redirectToRoute('editProduct', [
-                        'erreur'=>$exception
+                        'erreur' => $exception
                     ]);
                 }
 
@@ -188,19 +179,20 @@ class HomeController extends AbstractController
         return $this->render('home/editProduct.html.twig', [
             'form' => $form->createView(),
             'titre' => 'Modification de produit',
-            'product'=>$product
+            'product' => $product
 
         ]);
 
     }
 
     /**
-    *@Route("/deleteProduct/{id}", name="deleteProduct")
-    *
-    */
-    public function deleteProduct(EntityManagerInterface $manager, Product $product){
+     * @Route("/deleteProduct/{id}", name="deleteProduct")
+     *
+     */
+    public function deleteProduct(EntityManagerInterface $manager, Product $product)
+    {
 
-        unlink($this->getParameter('upload_directory').'/'.$product->getPicture());
+        unlink($this->getParameter('upload_directory') . '/' . $product->getPicture());
         $manager->remove($product);
         $manager->flush();
 
@@ -208,9 +200,64 @@ class HomeController extends AbstractController
         return $this->redirectToRoute('listProduct');
     }
 
+    /**
+     * @Route("/category", name="category")
+     * @Route("/editCategory/{id}", name="editCategory")
+     *
+     */
+    public function category(Request $request, EntityManagerInterface $manager, CategoryRepository $repository, $id = null)
+    {
+        $categories=$repository->findAll();
 
 
+        if (!empty($id)):
 
+            $category = $repository->find($id);
+
+        else:
+            $category = new Category();
+        endif;
+
+        $form = $this->createForm(CategoryType::class, $category);
+
+        $form->handleRequest($request);
+
+        if ($form->isSubmitted() && $form->isValid()):
+
+            $manager->persist($category);
+            $manager->flush();
+
+            if (!empty($id)):
+                $this->addFlash('success', 'Catégorie modifiée');
+            else:
+                $this->addFlash('success', 'Catégorie ajoutée');
+            endif;
+
+            return $this->redirectToRoute('category');
+
+        endif;
+
+
+        return $this->render('home/category.html.twig', [
+            'form'=>$form->createView(),
+            'categories'=>$categories,
+            'titre'=>'Gestion catégories'
+
+
+        ]);
+    }
+
+    /**
+    *@Route("/deleteCategory/{id}", name="deleteCategory")
+    *
+    */
+    public function deleteCategory(Category $category, EntityManagerInterface $manager){
+       $manager->remove($category);
+       $manager->flush();
+       $this->addFlash('success', 'Catégorie supprimée');
+
+       return $this->redirectToRoute('category');
+    }
 
 
 }

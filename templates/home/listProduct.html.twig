@@ -1,4 +1,4 @@
-{% extends 'base.html.twig' %}
+{% extends 'panelAdmin.html.twig' %}
 
 {% block body %}
 
@@ -12,6 +12,7 @@
             <th scope="col">Descriptif</th>
             <th scope="col">Photo</th>
             <th scope="col">Marque</th>
+            <th scope="col">Catégorie</th>
             <th scope="col">Section</th>
             <th scope="col">Actions</th>
         </tr>
@@ -27,21 +28,22 @@
             <td>{{ product.reference }}</td>
             <td>{{ product.price | format_currency('EUR') }}</td>
             <td>{{ product.description | slice(0,15) ~ '...' }}</td>
-            <td>
-                <img src="{{ asset('upload/') }}{{ product.picture }}" width="50" alt="{{ product.title }}">
-            </td>
-            <td>{{ product.brand }}</td>
-            <td>{{ product.gender }}</td>
-            <td>
-                <a href="{{ path('editProduct', { id:product.id  }) }}"><img src="{{ asset('update.png') }}" alt="modifier"></a>
-                <a href="{{ path('deleteProduct', {'id': product.id}) }}" onclick="return confirm('Etes-vous de vouloir supprimer cet article')"  ><img src="{{ asset('delete.png') }}" alt="supprimer"></a>
-            </td>
-        </tr>
+<td>
+    <img src="{{ asset('upload/') }}{{ product.picture }}" width="50" alt="{{ product.title }}">
+</td>
+<td>{{ product.brand }}</td>
+<td>{{ product.category.title }}</td>
+<td>{{ product.gender }}</td>
+<td>
+    <a href="{{ path('editProduct', { id:product.id  }) }}"><img src="{{ asset('update.png') }}" alt="modifier"></a>
+    <a href="{{ path('deleteProduct', {'id': product.id}) }}" onclick="return confirm('Etes-vous de vouloir supprimer cet article')"  ><img src="{{ asset('delete.png') }}" alt="supprimer"></a>
+</td>
+</tr>
 
-        {% endfor %}
+{% endfor %}
 
-        </tbody>
-    </table>
+</tbody>
+</table>
 
 
 
