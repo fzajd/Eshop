@@ -15,12 +15,12 @@
     {% endblock %}
 </head>
 <body >
-<div style="background-color: #999999;min-height: 100vh;" class="row justify-content-center p-2">
-    <div class="col-md-2 bg-white m-1">
+<div   class="row justify-content-center">
+    <div class="col-md-2 bg-white ">
         <ul class="nav flex-column">
             <li class="nav-item ms-5 mt-5">
                 <div class="btn-group" role="group" aria-label="Button group with nested dropdown">
-                    <a href="" class="btn btn-primary nav-link active"><i class="fas fa-user fa-2x"></i></a>
+                    <a  class="btn btn-primary  active"><i class="fas fa-user fa-2x"></i></a>
                     <div class="btn-group" role="group">
                         <button id="btnGroupDrop1" type="button" class="btn btn-primary dropdown-toggle" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false"></button>
                         <div class="dropdown-menu" aria-labelledby="btnGroupDrop1" style="">
@@ -34,7 +34,7 @@
             </li>
             <li class="nav-item ms-2 mt-5">
                 <div class="btn-group" role="group" aria-label="Button group with nested dropdown">
-                    <a href="" class="btn btn-primary nav-link active">Gestion des articles</a>
+                    <a href="" class="btn btn-primary  active">Gestion des articles</a>
                     <div class="btn-group" role="group">
                         <button id="btnGroupDrop1" type="button" class="btn btn-primary dropdown-toggle" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false"></button>
                         <div class="dropdown-menu" aria-labelledby="btnGroupDrop1" style="">
@@ -46,29 +46,29 @@
             </li>
             <li class="nav-item ms-2 mt-3">
                 <div class="btn-group" role="group" aria-label="Button group with nested dropdown">
-                    <a href="" class="btn btn-primary nav-link active">Gestion des catégories</a>
+                    <a href="" class="btn btn-primary  active">Gestion des sous-catégories</a>
                     <div class="btn-group" role="group">
                         <button id="btnGroupDrop1" type="button" class="btn btn-primary dropdown-toggle" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false"></button>
                         <div class="dropdown-menu" aria-labelledby="btnGroupDrop1" style="">
-                            <a class="dropdown-item" href="{{ path('category') }}">Liste catégories</a>
+                            <a class="dropdown-item" href="{{ path('category') }}">Liste sous-catégories</a>
                         </div>
                     </div>
                 </div>
             </li>
             <li class="nav-item ms-2 mt-3">
                 <div class="btn-group" role="group" aria-label="Button group with nested dropdown">
-                    <a href="" class="btn btn-primary nav-link active">Gestion des sous-catégories</a>
+                    <a href="" class="btn btn-primary  active">Gestion des catégories</a>
                     <div class="btn-group" role="group">
                         <button id="btnGroupDrop1" type="button" class="btn btn-primary dropdown-toggle" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false"></button>
                         <div class="dropdown-menu" aria-labelledby="btnGroupDrop1" style="">
-                            <a class="dropdown-item" href="{{ path('subCategory') }}">Liste sous-catégories</a>
+                            <a class="dropdown-item" href="{{ path('subCategory') }}">Liste catégories</a>
                         </div>
                     </div>
                 </div>
             </li>
             <li class="nav-item ms-2 mt-3">
                 <div class="btn-group" role="group" aria-label="Button group with nested dropdown">
-                    <a href="" class="btn btn-primary nav-link active">Gestion des utilisateur</a>
+                    <a href="" class="btn btn-primary  active">Gestion des utilisateur</a>
                     <div class="btn-group" role="group">
                         <button id="btnGroupDrop1" type="button" class="btn btn-primary dropdown-toggle" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false"></button>
                         <div class="dropdown-menu" aria-labelledby="btnGroupDrop1" style="">
@@ -81,7 +81,7 @@
 
         </ul>
     </div>
-    <div class="col-md-9 bg-white m-1">
+    <div class="col-md-9 bg-white table-responsive ">
 
         <div class="row justify-content-center mt-4 mb-4">
             <div class="col text-center"><h1>{% block titre %}{% endblock %}</h1></div>

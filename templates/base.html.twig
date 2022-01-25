@@ -32,24 +32,30 @@
 
                     </a>
                 </li>
+                {% if not app.user  %}
                 <li class="nav-item">
-                    <a class="nav-link" href=""></a>
+                    <a class="nav-link btn btn-success text-dark" href="{{ path('login') }}">Connexion</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" href=""></a>
+                    <a class="nav-link btn btn-primary text-white" href="{{ path('register') }}">Inscription</a>
                 </li>
+                {% endif %}
                 <li class="nav-item">
-                    <a class="nav-link" href="#">About</a>
+                    <a class="nav-link" href="{{ path('emailForm') }}">Nous contacter</a>
                 </li>
                 <li class="nav-item dropdown">
                     <a class="nav-link dropdown-toggle" data-bs-toggle="dropdown" href="#" role="button"
                        aria-haspopup="true" aria-expanded="false">Gestion</a>
                     <div class="dropdown-menu">
+                        {% if app.user and is_granted('ROLE_ADMIN') %}
                         <a class="dropdown-item" href="{{ path('listProduct') }}">Accès Back-office</a>
+                        {% endif %}
                         <a class="dropdown-item" href="#">Another action</a>
                         <a class="dropdown-item" href="#">Something else here</a>
+                        {% if app.user %}
                         <div class="dropdown-divider"></div>
-                        <a class="dropdown-item" href="#">Separated link</a>
+                        <a class="dropdown-item" href="{{ path('logout') }}">Déconnexion</a>
+                        {% endif %}
                     </div>
                 </li>
             </ul>

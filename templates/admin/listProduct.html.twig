@@ -12,6 +12,7 @@
             <th scope="col">Descriptif</th>
             <th scope="col">Photo</th>
             <th scope="col">Marque</th>
+            <th scope="col">Sous-Catégorie</th>
             <th scope="col">Catégorie</th>
             <th scope="col">Section</th>
             <th scope="col">Actions</th>
@@ -33,6 +34,7 @@
 </td>
 <td>{{ product.brand }}</td>
 <td>{{ product.category.title }}</td>
+<td>{{ product.category.subCategory.title }}</td>
 <td>{{ product.gender }}</td>
 <td>
     <a href="{{ path('editProduct', { id:product.id  }) }}"><img src="{{ asset('update.png') }}" alt="modifier"></a>

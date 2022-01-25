@@ -3,6 +3,8 @@
 namespace App\Form;
 
 use App\Entity\Category;
+use App\Entity\SubCategory;
+use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
@@ -18,9 +20,16 @@ class CategoryType extends AbstractType
                 'label'=>false,
                 'required'=>false,
                 'attr'=>[
-                    'placeholder'=>'Saisissez le nom de la catégorie',
+                    'placeholder'=>'Saisissez le nom de la sous-catégorie',
 
                 ]
+            ])
+            ->add('subCategory', EntityType::class,[
+                'label'=>false,
+                'required'=>false,
+                'placeholder'=>'Selectionnez une catégorie en relation',
+                'class'=>SubCategory::class,
+                'choice_label'=>'title'
             ])
             ->add('Enregistrer', SubmitType::class)
         ;

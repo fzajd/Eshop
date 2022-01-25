@@ -3,6 +3,8 @@
 namespace App\Entity;
 
 use App\Repository\SubCategoryRepository;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 
 /**
@@ -23,9 +25,16 @@ class SubCategory
     private $title;
 
     /**
-     * @ORM\ManyToOne(targetEntity=Category::class, inversedBy="subCategories")
+     * @ORM\OneToMany(targetEntity=Category::class, mappedBy="subCategory")
      */
     private $category;
+
+    public function __construct()
+    {
+        $this->category = new ArrayCollection();
+    }
+
+
 
     public function getId(): ?int
     {
@@ -44,15 +53,35 @@ class SubCategory
         return $this;
     }
 
-    public function getCategory(): ?Category
+    /**
+     * @return Collection|Category[]
+     */
+    public function getCategory(): Collection
     {
         return $this->category;
     }
 
-    public function setCategory(?Category $category): self
+    public function addCategory(Category $category): self
     {
-        $this->category = $category;
+        if (!$this->category->contains($category)) {
+            $this->category[] = $category;
+            $category->setSubCategory($this);
+        }
 
         return $this;
     }
+
+    public function removeCategory(Category $category): self
+    {
+        if ($this->category->removeElement($category)) {
+            // set the owning side to null (unless already changed)
+            if ($category->getSubCategory() === $this) {
+                $category->setSubCategory(null);
+            }
+        }
+
+        return $this;
+    }
+
+
 }

@@ -10,6 +10,7 @@
         <tr>
             <th scope="col">#</th>
             <th scope="col">Nom</th>
+            <th scope="col">Sous-catégories</th>
             <th scope="col">Actions</th>
         </tr>
         </thead>
@@ -21,6 +22,11 @@
             <tr>
                 <th scope="row">{{ subCategory.id }}</th>
                 <td>{{ subCategory.title }}</td>
+                <td>
+                    {% for category in subCategory.category  %}
+                    -{{ category.title }}<br>
+                    {% endfor %}
+                </td>
                 <td>
                     <a href="{{ path('editSubCategory', { id:subCategory.id  }) }}"><img src="{{ asset('update.png') }}" alt="modifier"></a>
                     <a href="{{ path('deleteSubCategory', {'id': subCategory.id}) }}" onclick="return confirm('Etes-vous de vouloir supprimer cette sous-categorie')"  ><img src="{{ asset('delete.png') }}" alt="supprimer"></a>

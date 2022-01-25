@@ -30,14 +30,16 @@ class Category
     private $product;
 
     /**
-     * @ORM\OneToMany(targetEntity=SubCategory::class, mappedBy="category")
+     * @ORM\ManyToOne(targetEntity=SubCategory::class, inversedBy="category")
      */
-    private $subCategories;
+    private $subCategory;
+
+
 
     public function __construct()
     {
         $this->product = new ArrayCollection();
-        $this->subCategories = new ArrayCollection();
+
     }
 
     public function getId(): ?int
@@ -87,33 +89,17 @@ class Category
         return $this;
     }
 
-    /**
-     * @return Collection|SubCategory[]
-     */
-    public function getSubCategories(): Collection
+    public function getSubCategory(): ?SubCategory
     {
-        return $this->subCategories;
+        return $this->subCategory;
     }
 
-    public function addSubCategory(SubCategory $subCategory): self
+    public function setSubCategory(?SubCategory $subCategory): self
     {
-        if (!$this->subCategories->contains($subCategory)) {
-            $this->subCategories[] = $subCategory;
-            $subCategory->setCategory($this);
-        }
+        $this->subCategory = $subCategory;
 
         return $this;
     }
 
-    public function removeSubCategory(SubCategory $subCategory): self
-    {
-        if ($this->subCategories->removeElement($subCategory)) {
-            // set the owning side to null (unless already changed)
-            if ($subCategory->getCategory() === $this) {
-                $subCategory->setCategory(null);
-            }
-        }
 
-        return $this;
-    }
 }

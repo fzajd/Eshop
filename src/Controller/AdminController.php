@@ -228,7 +228,7 @@ class AdminController extends AbstractController
         return $this->render('admin/category.html.twig', [
             'form'=>$form->createView(),
             'categories'=>$categories,
-            'titre'=>'Gestion catégories'
+            'titre'=>'Gestion des sous-catégories'
 
 
         ]);
@@ -289,7 +289,7 @@ class AdminController extends AbstractController
         return $this->render('admin/subCategory.html.twig', [
             'form'=>$form->createView(),
             'subCategories'=> $subCategories,
-            'titre'=>'Gestion sous-catégories'
+            'titre'=>'Gestion catégories'
 
 
         ]);
@@ -304,7 +304,7 @@ class AdminController extends AbstractController
         $manager->flush();
         $this->addFlash('success', 'Sous-Catégorie supprimée');
 
-        return $this->redirectToRoute('SubCategory');
+        return $this->redirectToRoute('subCategory');
     }
 
 
