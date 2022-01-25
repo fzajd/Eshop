@@ -91,5 +91,11 @@ class PanierService
 
     }
 
+    public function destroy()
+    {
+        $this->session->remove('panier');
+
+    }
+
 
 }

@@ -3,6 +3,8 @@
 namespace App\Controller;
 
 use App\Entity\Category;
+use App\Entity\Detail;
+use App\Entity\Order;
 use App\Entity\Product;
 use App\Entity\SubCategory;
 use App\Form\CategoryType;
@@ -11,6 +13,7 @@ use App\Form\SubCategoryType;
 use App\Repository\CategoryRepository;
 use App\Repository\ProductRepository;
 use App\Repository\SubCategoryRepository;
+use App\Service\Panier\PanierService;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\File\Exception\FileException;
@@ -306,6 +309,35 @@ class AdminController extends AbstractController
 
         return $this->redirectToRoute('subCategory');
     }
+
+    /**
+    *@Route("/order", name="order")
+    *
+    */
+    public function order(EntityManagerInterface $manager, PanierService $panierService){
+
+        $order=new Order();
+        $order->setUser($this->getUser());
+        $order->setDate(new \DateTime());
+        $panier=$panierService->fullCart();
+
+        foreach ($panier as $item=>$value):
+            $achat=new Detail();
+            $achat->setProduct($value['product']);
+            $achat->setQuantity($value['quantity']);
+            $achat->setOrders($order);
+            $manager->persist($achat);
+        endforeach;
+           $manager->persist($order);
+           $manager->flush();
+           $panierService->destroy();
+           $this->addFlash('success', 'Merci pour votre achat, suivez votre commande dans votre espace membre');
+
+       return $this->redirectToRoute('home', [
+       ]);
+
+    }
+
 
 
 

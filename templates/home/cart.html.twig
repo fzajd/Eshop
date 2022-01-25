@@ -1,0 +1,89 @@
+{% extends 'base.html.twig' %}
+
+{% block body %}
+    {% if items is not empty %}
+
+
+        <table class="table table-dark">
+            <thead>
+            <tr>
+                <th scope="col">Nom</th>
+                <th scope="col">Ref</th>
+                <th scope="col">Prix</th>
+                <th scope="col">Photo</th>
+                <th scope="col">Marque</th>
+                <th scope="col"><span class="btn btn-primary">-</span></th>
+                <th scope="col">quantité</th>
+                <th scope="col"><span class="btn btn-primary">+</span></th>
+                <th scope="col">Supprimer</th>
+                <th scope="col">Total</th>
+            </tr>
+            </thead>
+            <tbody>
+
+            {% for item  in  items %}
+
+
+                <tr>
+                    <td>{{ item.product.title }}</td>
+                    <td>{{ item.product.reference }}</td>
+                    <td>{{ item.product.price | format_currency('EUR') }}</td>
+                    <td>
+                        <img src="{{ asset('upload/') }}{{ item.product.picture }}" width="70"
+                             alt="{{ item.product.title }}">
+                    </td>
+                    <td>{{ item.product.brand }}</td>
+                    <td><a href="{{ path('removeCart', {'id': item.product.id }) }}" class="btn btn-primary">-</a></td>
+                    <td class="text-center "><a href="" class="btn btn-light text-dark">{{ item.quantity }}</a></td>
+                    <td><a href="{{ path('addCart', {'id': item.product.id, param: 'cart' }) }}"
+                           class="btn btn-primary">+</a></td>
+                    <td class="text-center">
+                        <a href="{{ path('deleteCart', {'id': item.product.id }) }}"
+                           onclick="return confirm('Etes-vous de vouloir supprimer cet article de votre panier')"><img
+                                    src="{{ asset('delete.png') }}" alt="supprimer"></a>
+                    </td>
+                    <td>{{ item.product.price * item.quantity }} €</td>
+                </tr>
+
+            {% endfor %}
+
+            </tbody>
+        </table>
+
+        <h3>Total : {{ total }} €</h3>
+
+        <a href="{{ path('destroyCart') }}" class="btn btn-danger mt-5"  onclick="return confirm('Etes-vous de vouloir supprimer cet article de votre panier')"  >Vider le panier</a>
+
+        {% if app.user %}
+
+            <a href="{{ path('order') }}" class="btn btn-warning mt-5">Passer à la commande</a>
+        {% else %}
+
+            <a href="{{ path('login') }}" class="btn btn-warning mt-5">Connectez vous pour passer à la commande</a>
+
+        {% endif %}
+
+
+    {% else %}
+
+        <div class="text-center">
+            <h3>Votre panier est vider, allez vite consulter notre <a class="btn btn-success rounded"
+                                                                      href="{{ path('home') }}">catalogue</a></h3>
+        </div>
+
+
+    {% endif %}
+
+
+{% endblock %}
+
+{% block title %}
+    {{ parent() }}{{ titre }}
+{% endblock %}
+
+
+{% block titre %}
+
+    {{ titre }}
+{% endblock %}
+
