@@ -5,25 +5,32 @@
 {% endblock %}
 
 
-{% block titre %}
 
-    Bienvenue!
-{% endblock %}
 
 {% block body %}
-    <div class="row justify-content-between">
+    <div >
+            <a href="{{ path('filterProduct', {param: 'femme' }) }}" type="button"
+               class="btn btn-outline-secondary rounded ">Femme</a>
+            <a href="{{ path('filterProduct', {param: 'homme' }) }}" type="button"
+               class="btn btn-outline-secondary rounded mx-2">Homme</a>
+            <a href="{{ path('filterProduct', {param: 'enfant'}) }}" type="button"
+               class="btn btn-outline-secondary rounded">Enfant</a>
+
+    </div>
+    <div class="row justify-content-between ms-0 mt-3">
 
         {% for product in products %}
 
-        <div class="card col-md-3" style="width: 18rem;">
-            <img src="{{ asset('upload/') }}{{ product.picture }}" class="card-img-top" alt="{{ product.title }}">
-            <div class="card-body">
-                <h5 class="card-title">{{ product.title }}</h5>
-                <h4 class="card-title">{{ product.price | format_currency('EUR') }} </h4>
-                <p class="card-text">{{ product.description }}</p>
-                <a href="{{ path('addCart', { id: product.id, param: 'home' }) }}" class="btn btn-primary">Ajouter au panier</a>
+            <div class="card col-md-3" style="width: 18rem;">
+                <img src="{{ asset('upload/') }}{{ product.picture }}" class="card-img-top" alt="{{ product.title }}">
+                <div class="card-body">
+                    <h5 class="card-title">{{ product.title }}</h5>
+                    <h4 class="card-title">{{ product.price | format_currency('EUR') }} </h4>
+                    <p class="card-text">{{ product.description }}</p>
+                    <a href="{{ path('addCart', { id: product.id, param: 'home' }) }}" class="btn btn-primary">Ajouter
+                        au panier</a>
+                </div>
             </div>
-        </div>
 
         {% endfor %}
 

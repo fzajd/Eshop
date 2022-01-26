@@ -8,6 +8,7 @@ use App\Form\CategoryType;
 use App\Form\ProductType;
 use App\Repository\CategoryRepository;
 use App\Repository\ProductRepository;
+use App\Repository\SubCategoryRepository;
 use App\Service\Panier\PanierService;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bridge\Twig\Mime\TemplatedEmail;
@@ -117,20 +118,22 @@ class HomeController extends AbstractController
 
 
     /**
-    *@Route("/removeCart/{id}", name="removeCart")
-    *
-    */
-    public function removeCart(PanierService $panierService,$id){
-       $panierService->remove($id);
+     * @Route("/removeCart/{id}", name="removeCart")
+     *
+     */
+    public function removeCart(PanierService $panierService, $id)
+    {
+        $panierService->remove($id);
 
-       return $this->redirectToRoute('cart');
+        return $this->redirectToRoute('cart');
     }
 
     /**
-     *@Route("/deleteCart/{id}", name="deleteCart")
+     * @Route("/deleteCart/{id}", name="deleteCart")
      *
      */
-    public function deleteCart(PanierService $panierService, $id){
+    public function deleteCart(PanierService $panierService, $id)
+    {
         $panierService->delete($id);
 
         return $this->redirectToRoute('cart');
@@ -156,17 +159,117 @@ class HomeController extends AbstractController
     }
 
     /**
-    *@Route("/destroyCart", name="destroyCart")
-    *
-    */
-    public function destroyCart(Request $request, PanierService $panierService){
+     * @Route("/destroyCart", name="destroyCart")
+     *
+     */
+    public function destroyCart(Request $request, PanierService $panierService)
+    {
 
-       //$request->cookies->set('panierDestroy', $panierService->fullCart());
+        //$request->cookies->set('panierDestroy', $panierService->fullCart());
 
         $panierService->destroy();
 
-       return $this->redirectToRoute('home');
+        return $this->redirectToRoute('home');
 
+    }
+
+
+    /**
+     * @Route("/filterProduct/{param}", name="filterProduct")
+     * @Route("/filterValidate", name="filterValidate")
+     */
+    public function filterProduct(ProductRepository $productRepository, Request $request, SubCategoryRepository $categoryRepository, CategoryRepository $subcategoryRepository, $param = null)
+    {
+
+
+        $categories = $categoryRepository->findAll();
+        $affichage = 'categorie';
+        $products = $productRepository->findBy(['gender' => $param], ['price' => 'ASC']);
+        //dd($request->request);
+
+        $sousCategories="";
+
+        if (!empty($_POST)):
+            $param = $request->request->get('section');
+            $prixmax=$request->request->get('prixmax');
+            // etape 1 txt
+            if (isset($_POST['cat']) && $_POST['cat']!=='all'):
+                $cat =$categoryRepository->find($request->request->get('cat')) ;
+            //dd($cat);
+                $affichage = 'sousCategorie';
+                $sousCategories=$subcategoryRepository->findBy(['subCategory'=>$cat]);
+                //dd($sousCategories);
+            endif;
+            // etape 2 txt
+            if (isset($_POST['subCat']) && $_POST['subCat']!=='all'):
+                $subCat =$subcategoryRepository->find($request->request->get('subCat')) ;
+
+                $affichage = 'sousCategorie';
+                $sousCategories=$subcategoryRepository->findBy(['subCategory'=>$subCat->getSubCategory()]);
+            endif;
+
+            //dd($_POST);
+
+
+            // user n'a rien saisi
+           if (isset($_POST['cat']) && $_POST['cat']=='all' && $_POST['prixmax']=='0' ):
+
+            $products = $productRepository->findBy(['gender' => $param], ['price' => 'ASC']);
+
+            endif;
+
+            // user a séléctionnez la catégorie mais pas de prix
+          if (isset($_POST['cat']) && $_POST['cat'] !=='all' && $_POST['prixmax']=='0'):
+            //dd($cat);
+
+            $products = $productRepository->findByCategory( $param, $cat);
+
+          endif;
+
+            // user a selectionné le prix mais pas la catégorie
+           if (isset($_POST['cat']) && $_POST['cat'] =='all' && $_POST['prixmax'] !== '0'):
+
+            $products=$productRepository->findByPrice($prixmax, $param);
+
+            endif;
+
+             //user a selectionné le prix et la categorie
+            if (isset($_POST['cat']) && $_POST['cat'] !=='all' && $_POST['prixmax'] !=='0'):
+                //dd($prixmax);
+                $products=$productRepository->findByCategoryPrice( $param,$cat, $prixmax);
+                //dd($products);
+            endif;
+
+            // user a séléctionnez la souscatégorie mais pas de prix
+            if (isset($_POST['subCat']) && $_POST['subCat'] !=='all' && $_POST['prixmax']=='0'):
+                $products = $productRepository->findBy(['category'=>$subCat]);
+                endif;
+            // user a selectionné le prix mais pas la souscatégorie
+            if (isset($_POST['subCat']) && $_POST['subCat'] =='all' && $_POST['prixmax'] !== '0'):
+                $products=$productRepository->findByPrice($prixmax, $param);
+            endif;
+            // user a selectionné le prix et la souscategorie
+            if (isset($_POST['subCat']) && $_POST['subCat'] !=='all' && $_POST['prixmax'] !=='0'):
+                $products=$productRepository->findByPriceSubCategory(  $prixmax,$param,$subCat);
+            endif;
+            return $this->render('home/filterProduct.html.twig', [
+                'products' => $products,
+                'categories' => $categories,
+                'affichage' => $affichage,
+                'param' => $param,
+                'sousCategories'=>$sousCategories
+            ]);
+
+        endif;
+
+
+        return $this->render('home/filterProduct.html.twig', [
+            'products' => $products,
+            'categories' => $categories,
+            'affichage' => $affichage,
+            'param' => $param,
+            'sousCategories'=>$sousCategories
+        ]);
     }
 
 
