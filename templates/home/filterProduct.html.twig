@@ -12,13 +12,17 @@
 
     </div>
 
-    <a href="" onclick="loadForm(event)" class="btn btn-primary p-1">+ de filtres</a>
-
+    <button onclick="loadForm()" id="hide" class="btn btn-primary p-1">+ de filtres</button>
+  {{ dump(categories, sousCategories, prixmax ) }}
     <div id="form">
 
         <form action="{{ path('filterValidate') }}" method="post">
             <input type="hidden" name="section" value="{{ param }}">
             <div class="form-group">
+                <input  name="categorie" type="hidden">
+                <input name="sousCategorie" type="hidden">
+                <input name="prix" type="hidden">
+                <input name="gender" type="hidden">
                 {% if affichage == 'categorie' %}
 
                     <label for="exampleSelect1" class="form-label mt-4">Catégories</label>
@@ -50,7 +54,7 @@
                 <label for="">Votre budget</label>
                 <div class="range-wrap mt-4 ms-3 ">
                     <div class="range-value" id="rangeV"></div>
-                    <input id="range" name="prixmax" type="range" min="0" max="1500" value="0" step="50">
+                    <input id="range" name="prixmax" type="range" min="0" max="1500" value="50" step="50">
                 </div>
             </div>
 
@@ -91,18 +95,27 @@
                 rangeV.style.left = `calc(${newValue}% + (${newPosition}px))`;
 
             };
+    </script>
+    <script>
+
+        var loadForm = function (){
+            var form= document.getElementById('form');
+            var button= document.getElementById('hide');
+
+            //console.log('form')
+
+            if (form.style.display === "block"){
+
+                form.style.display = "none";
+                button.textContent="+ de filtres"
+
+            }else{
+                form.style.display = "block"
+                button.textContent="réduire"
+            }
 
 
-        document.addEventListener("DOMContentLoaded", setValue);
-        range.addEventListener('input', setValue);
-
-        document.querySelector("#hamburger").addEventListener("click", function () {
-            document.querySelector(".nav").classList.add("visible");
-        })
-
-        document.querySelector(".close-nav").addEventListener("click", function () {
-            document.querySelector(".nav").classList.remove("visible");
-        })
+        }
     </script>
 
 

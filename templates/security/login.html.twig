@@ -6,29 +6,51 @@
         <div class="row mb-3">
             <label for="inputEmail3" class="col-sm-2 col-form-label">Email</label>
             <div class="col-sm-10">
-                <input type="email" name="_username" class="form-control" id="inputEmail3">
+                <input type="email" name="_username" class="form-control " id="inputEmail3">
             </div>
         </div>
         <div class="row mb-3">
-            <label for="inputPassword3" class="col-sm-2 col-form-label">Mot de passe</label>
+            <label for="passShow" class="col-sm-2 col-form-label">Mot de passe</label>
             <div class="col-sm-10">
-                <input type="password" name="_password" class="form-control" id="inputPassword3">
+                <input type="password" name="_password" class="form-control passShow" id="passShow">
             </div>
+            <a href="{{ path('resetForm') }}">Mot de passe oublié?</a>
         </div>
         <div class="row mb-3">
             <div class="col-sm-10 offset-sm-2">
                 <div class="form-check">
-                    <input class="form-check-input" type="checkbox" id="gridCheck1">
-                    <label class="form-check-label" for="gridCheck1">
-                        Example checkbox
+                    <input onclick="showpassword()" class="form-check-input" type="checkbox" id="show">
+                    <label class="form-check-label" for="show">
+                        Afficher les mots de passe
                     </label>
                 </div>
             </div>
+
         </div>
         <button type="submit" class="btn btn-primary">Se connecter</button>
     </form>
 
+    <script>
 
+
+
+        var showpassword= function (){
+            var inputs= document.getElementsByClassName('passShow');
+           for (i=0; i < inputs.length ; i++){
+
+                if (inputs[i].type === 'password') {
+                    inputs[i].type = 'text';
+
+                } else {
+                    inputs[i].type = 'password';
+
+                } }
+
+
+        }
+
+
+    </script>
 {% endblock %}
 
 {% block title %}

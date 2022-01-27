@@ -188,16 +188,18 @@ class HomeController extends AbstractController
         //dd($request->request);
 
         $sousCategories="";
+        $prixmax=0;
 
         if (!empty($_POST)):
             $param = $request->request->get('section');
             $prixmax=$request->request->get('prixmax');
             // etape 1 txt
             if (isset($_POST['cat']) && $_POST['cat']!=='all'):
-                $cat =$categoryRepository->find($request->request->get('cat')) ;
+
+                $categories =$categoryRepository->find($request->request->get('cat')) ;
             //dd($cat);
                 $affichage = 'sousCategorie';
-                $sousCategories=$subcategoryRepository->findBy(['subCategory'=>$cat]);
+                $sousCategories=$subcategoryRepository->findBy(['subCategory'=>$categories]);
                 //dd($sousCategories);
             endif;
             // etape 2 txt
@@ -222,7 +224,7 @@ class HomeController extends AbstractController
           if (isset($_POST['cat']) && $_POST['cat'] !=='all' && $_POST['prixmax']=='0'):
             //dd($cat);
 
-            $products = $productRepository->findByCategory( $param, $cat);
+            $products = $productRepository->findByCategory( $param, $categories);
 
           endif;
 
@@ -236,7 +238,7 @@ class HomeController extends AbstractController
              //user a selectionné le prix et la categorie
             if (isset($_POST['cat']) && $_POST['cat'] !=='all' && $_POST['prixmax'] !=='0'):
                 //dd($prixmax);
-                $products=$productRepository->findByCategoryPrice( $param,$cat, $prixmax);
+                $products=$productRepository->findByCategoryPrice( $param,$categories, $prixmax);
                 //dd($products);
             endif;
 
@@ -252,12 +254,14 @@ class HomeController extends AbstractController
             if (isset($_POST['subCat']) && $_POST['subCat'] !=='all' && $_POST['prixmax'] !=='0'):
                 $products=$productRepository->findByPriceSubCategory(  $prixmax,$param,$subCat);
             endif;
+
             return $this->render('home/filterProduct.html.twig', [
                 'products' => $products,
                 'categories' => $categories,
                 'affichage' => $affichage,
                 'param' => $param,
-                'sousCategories'=>$sousCategories
+                'sousCategories'=>$sousCategories,
+                'prixmax'=>$prixmax
             ]);
 
         endif;
@@ -268,7 +272,8 @@ class HomeController extends AbstractController
             'categories' => $categories,
             'affichage' => $affichage,
             'param' => $param,
-            'sousCategories'=>$sousCategories
+            'sousCategories'=>$sousCategories,
+            'prixmax'=>$prixmax
         ]);
     }
 

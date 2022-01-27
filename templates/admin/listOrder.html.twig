@@ -1,0 +1,41 @@
+{% extends 'panelAdmin.html.twig' %}
+
+{% block title %}
+
+{% endblock %}
+
+{% block body %}
+
+    <table class="table table-dark">
+        <thead>
+        <tr>
+            <th scope="col">#</th>
+            <th scope="col">Date</th>
+            <th scope="col">Montant</th>
+            <th scope="col">Client</th>
+            <th scope="col">Détail</th>
+        </tr>
+        </thead>
+        <tbody>
+        {% for order in orders %}
+            {% set total=0 %}
+            {% for detail in order.details %}
+                {% set total= total + detail.quantity * detail.product.price %}
+            {% endfor %}
+
+        <tr>
+            <th scope="row">{{ order.id }}</th>
+            <td>{{ order.date | date('d/m/Y') }}</td>
+
+            <td>{{ total }} €</td>
+            <td>{{ order.user.lastName }} {{ order.user.firstName }}</td>
+            <td><a href="{{ path('detailOrder', {'id': order.id }) }}" class="btn btn-light">Voir le Détail</a></td>
+        </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+
+
+
+{% endblock %}
+

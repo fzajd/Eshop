@@ -1,0 +1,62 @@
+{% extends 'panelAdmin.html.twig' %}
+
+{% block body %}
+
+    <table class="table table-dark">
+        <thead>
+        <tr>
+            <th scope="col">#</th>
+            <th scope="col">Nom</th>
+            <th scope="col">Ref</th>
+            <th scope="col">Prix</th>
+            <th scope="col">Descriptif</th>
+            <th scope="col">Photo</th>
+            <th scope="col">Marque</th>
+            <th scope="col">Quantité</th>
+            <th scope="col">Montant total</th>
+
+            <th scope="col">Actions</th>
+        </tr>
+        </thead>
+        <tbody>
+
+        {% for detail  in  order.details %}
+
+
+            <tr>
+                <th scope="row">{{ detail.product.id }}</th>
+                <td>{{ detail.product.title }}</td>
+                <td>{{ detail.product.reference }}</td>
+                <td>{{ detail.product.price | format_currency('EUR') }}</td>
+                <td>{{ detail.product.description | slice(0,15) ~ '...' }}</td>
+                <td>
+                    <img src="{{ asset('upload/') }}{{ detail.product.picture }}" width="50" alt="{{ detail.product.title }}">
+                </td>
+                <td>{{ detail.product.brand }}</td>
+                {% set total=detail.product.price * detail.quantity %}
+                <td>{{  detail.quantity }}</td>
+                <td>{{ total | format_currency('EUR') }}</td>
+                <td>
+                    <a href="" class="btn btn-dark">Gérer la livraison</a>
+                </td>
+            </tr>
+
+        {% endfor %}
+
+        </tbody>
+    </table>
+
+
+
+{% endblock %}
+
+{% block title %}
+    {{ parent() }}Liste des produits
+{% endblock %}
+
+
+{% block titre %}
+
+    Liste des produits
+{% endblock %}
+

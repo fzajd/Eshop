@@ -11,6 +11,7 @@ use App\Form\CategoryType;
 use App\Form\ProductType;
 use App\Form\SubCategoryType;
 use App\Repository\CategoryRepository;
+use App\Repository\OrderRepository;
 use App\Repository\ProductRepository;
 use App\Repository\SubCategoryRepository;
 use App\Service\Panier\PanierService;
@@ -336,6 +337,31 @@ class AdminController extends AbstractController
        return $this->redirectToRoute('home', [
        ]);
 
+    }
+
+    /**
+    *@Route("/listOrder", name="listOrder")
+    *
+    */
+    public function listOrder(OrderRepository $repository){
+
+        $orders= $repository->findAll();
+
+       return $this->render('admin/listOrder.html.twig', [
+           'orders'=>$orders
+       ]);
+    }
+
+    /**
+    *@Route("/detailOrder/{id}", name="detailOrder")
+    *
+    */
+    public function detailOrder(Order $order){
+
+
+       return $this->render('admin/detailOrder.html.twig', [
+           'order'=>$order
+       ]);
     }
 
 
