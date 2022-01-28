@@ -3,6 +3,7 @@
 namespace App\Controller;
 
 use App\Entity\Category;
+use App\Entity\Delivery;
 use App\Entity\Detail;
 use App\Entity\Order;
 use App\Entity\Product;
@@ -320,6 +321,15 @@ class AdminController extends AbstractController
         $order=new Order();
         $order->setUser($this->getUser());
         $order->setDate(new \DateTime());
+
+
+        $delivery=new Delivery();
+
+        $delivery->setStatus(0);
+        $delivery->setPredictedDate(new \DateTime('now +3day'));
+        $order->setDelivery($delivery);
+
+
         $panier=$panierService->fullCart();
 
         foreach ($panier as $item=>$value):
@@ -330,6 +340,7 @@ class AdminController extends AbstractController
             $manager->persist($achat);
         endforeach;
            $manager->persist($order);
+           $manager->persist($delivery);
            $manager->flush();
            $panierService->destroy();
            $this->addFlash('success', 'Merci pour votre achat, suivez votre commande dans votre espace membre');

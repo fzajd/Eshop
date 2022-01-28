@@ -28,9 +28,11 @@ class Delivery
     private $predictedDate;
 
     /**
-     * @ORM\OneToOne(targetEntity=Order::class, cascade={"persist", "remove"})
+     * @ORM\OneToOne(targetEntity=Order::class, mappedBy="delivery", cascade={"persist", "remove"})
      */
     private $orders;
+
+
 
     public function getId(): ?int
     {
@@ -68,8 +70,20 @@ class Delivery
 
     public function setOrders(?Order $orders): self
     {
+        // unset the owning side of the relation if necessary
+        if ($orders === null && $this->orders !== null) {
+            $this->orders->setDelivery(null);
+        }
+
+        // set the owning side of the relation if necessary
+        if ($orders !== null && $orders->getDelivery() !== $this) {
+            $orders->setDelivery($this);
+        }
+
         $this->orders = $orders;
 
         return $this;
     }
+
+
 }

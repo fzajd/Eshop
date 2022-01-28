@@ -13,6 +13,7 @@
             <th scope="col">Date</th>
             <th scope="col">Montant</th>
             <th scope="col">Client</th>
+            <th scope="col">Statut</th>
             <th scope="col">Détail</th>
         </tr>
         </thead>
@@ -29,6 +30,7 @@
 
             <td>{{ total }} €</td>
             <td>{{ order.user.lastName }} {{ order.user.firstName }}</td>
+            <td>{{ order.de }}</td>
             <td><a href="{{ path('detailOrder', {'id': order.id }) }}" class="btn btn-light">Voir le Détail</a></td>
         </tr>
         {% endfor %}
