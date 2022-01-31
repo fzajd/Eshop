@@ -491,26 +491,76 @@ class AdminController extends AbstractController
     }
 
     /**
-    *@Route("/editPromo/{id}", name="editPromo")
+    *@Route("/editPromo/{id}/{param}", name="editPromo")
+     *
     *
     */
-    public function editPromo(CategoryRepository $subCategoryRepository, SubCategoryRepository $categoryRepository, Request $request, EntityManagerInterface $manager, ProductRepository $productRepository,PromoRepository $promoRepository, $id){
+    public function editPromo(CategoryRepository $subCategoryRepository, SubCategoryRepository $categoryRepository, Request $request, EntityManagerInterface $manager, ProductRepository $productRepository,PromoRepository $promoRepository, $id, $param){
 
         $categories = $categoryRepository->findAll();
         $subCategories = $subCategoryRepository->findAll();
 
         $promo=$promoRepository->find($id);
-        if ($promo->getCategory() !== null):
-           $param='subCategory';
-        endif;
-        if ($promo->getSubCategory() !== null):
-            $param='category';
-        endif;
-        if ($promo->getSection() !== null):
-            $param='section';
-        endif;
+
 
         if (!empty($_POST)):
+            $code = $request->request->get('code');
+            $startDate = $request->request->get('startDate');
+            $endDate = $request->request->get('endDate');
+            $type = $request->request->get('type');
+            $value = $request->request->get('value');
+
+
+            $promo->setCode($code);
+            $promo->setType($type);
+            $promo->setValue($value);
+
+            //dd($_POST);
+            if (empty($startDate)):
+                $promo->setStartDate(null);
+            else:
+                $promo->setStartDate(new \DateTime($startDate));
+            endif;
+
+            if (empty($endDate)):
+                $promo->setEndDate(null);
+            else:
+                $promo->setEndDate(new \DateTime($endDate));
+            endif;
+
+            if ($param == 'section'):
+                $products = $productRepository->findBy(['gender' => $request->request->get('section')]);
+                $promo->setCategory(null);
+                $promo->setSubCategory(null);
+                $promo->setSection($request->request->get('section'));
+
+                foreach ($products as $product):
+                    $product->setPromo($promo);
+                    $manager->persist($product);
+
+                endforeach;
+
+
+            endif;
+            if ($param == 'category'):
+                $promo->setCategory(null);
+                $promo->setSection(null);
+                $category = $categoryRepository->find($request->request->get('category'));
+                $promo->setSubCategory($category);
+
+            endif;
+            if ($param == 'subCategory'):
+                $promo->setSubCategory(null);
+               $promo->setSection(null);
+                $subCategory = $subCategoryRepository->find($request->request->get('subCategory'));
+                $promo->setCategory($subCategory);
+
+            endif;
+            $manager->persist($promo);
+            $manager->flush();
+
+            $this->addFlash('success', 'Code promo ajouté');
+            return $this->redirectToRoute('listPromo');
 
 
         endif;

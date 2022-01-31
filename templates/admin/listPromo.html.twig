@@ -43,17 +43,20 @@
                 <td>
                     {% if promo.category is not null %}
                         {{ promo.category.title }}
+                        {% set param='subCategory' %}
                     {% endif %}
                     {% if promo.subCategory is not null %}
                         {{ promo.subCategory.title }}
+                        {% set param='category' %}
                     {% endif %}
                     {% if promo.section is not null %}
                         {{ promo.section }}
+                        {% set param='section' %}
                     {% endif %}
 
                 </td>
                 <td>
-                    <a href="{{ path('editPromo', {'id': promo.id }) }}"><img src="{{ asset('update.png') }}" alt="modifier"></a>
+                    <a href="{{ path('editPromo', {'id': promo.id, param:param }) }}"><img src="{{ asset('update.png') }}" alt="modifier"></a>
                     <a href="" onclick="return confirm('Etes-vous de vouloir supprimer cette categorie')"><img
                                 src="{{ asset('delete.png') }}" alt="supprimer"></a>
                 </td>
