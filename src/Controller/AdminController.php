@@ -7,13 +7,16 @@ use App\Entity\Delivery;
 use App\Entity\Detail;
 use App\Entity\Order;
 use App\Entity\Product;
+use App\Entity\Promo;
 use App\Entity\SubCategory;
 use App\Form\CategoryType;
 use App\Form\ProductType;
 use App\Form\SubCategoryType;
 use App\Repository\CategoryRepository;
+use App\Repository\DeliveryRepository;
 use App\Repository\OrderRepository;
 use App\Repository\ProductRepository;
+use App\Repository\PromoRepository;
 use App\Repository\SubCategoryRepository;
 use App\Service\Panier\PanierService;
 use Doctrine\ORM\EntityManagerInterface;
@@ -199,7 +202,7 @@ class AdminController extends AbstractController
      */
     public function category(Request $request, EntityManagerInterface $manager, CategoryRepository $repository, $id = null)
     {
-        $categories=$repository->findAll();
+        $categories = $repository->findAll();
 
 
         if (!empty($id)):
@@ -231,26 +234,26 @@ class AdminController extends AbstractController
 
 
         return $this->render('admin/category.html.twig', [
-            'form'=>$form->createView(),
-            'categories'=>$categories,
-            'titre'=>'Gestion des sous-catégories'
+            'form' => $form->createView(),
+            'categories' => $categories,
+            'titre' => 'Gestion des sous-catégories'
 
 
         ]);
     }
 
     /**
-     *@Route("/deleteCategory/{id}", name="deleteCategory")
+     * @Route("/deleteCategory/{id}", name="deleteCategory")
      *
      */
-    public function deleteCategory(Category $category, EntityManagerInterface $manager){
+    public function deleteCategory(Category $category, EntityManagerInterface $manager)
+    {
         $manager->remove($category);
         $manager->flush();
         $this->addFlash('success', 'Catégorie supprimée');
 
         return $this->redirectToRoute('category');
     }
-
 
 
     /**
@@ -260,7 +263,7 @@ class AdminController extends AbstractController
      */
     public function subCategory(Request $request, EntityManagerInterface $manager, SubCategoryRepository $repository, $id = null)
     {
-        $subCategories=$repository->findAll();
+        $subCategories = $repository->findAll();
 
 
         if (!empty($id)):
@@ -271,7 +274,7 @@ class AdminController extends AbstractController
             $subCategory = new SubCategory();
         endif;
 
-        $form = $this->createForm(SubCategoryType::class,  $subCategory);
+        $form = $this->createForm(SubCategoryType::class, $subCategory);
 
         $form->handleRequest($request);
 
@@ -292,19 +295,20 @@ class AdminController extends AbstractController
 
 
         return $this->render('admin/subCategory.html.twig', [
-            'form'=>$form->createView(),
-            'subCategories'=> $subCategories,
-            'titre'=>'Gestion catégories'
+            'form' => $form->createView(),
+            'subCategories' => $subCategories,
+            'titre' => 'Gestion catégories'
 
 
         ]);
     }
 
     /**
-     *@Route("/deleteSubCategory/{id}", name="deleteSubCategory")
+     * @Route("/deleteSubCategory/{id}", name="deleteSubCategory")
      *
      */
-    public function deleteSubCategory(SubCategory $subCategory, EntityManagerInterface $manager){
+    public function deleteSubCategory(SubCategory $subCategory, EntityManagerInterface $manager)
+    {
         $manager->remove($subCategory);
         $manager->flush();
         $this->addFlash('success', 'Sous-Catégorie supprimée');
@@ -313,75 +317,212 @@ class AdminController extends AbstractController
     }
 
     /**
-    *@Route("/order", name="order")
-    *
-    */
-    public function order(EntityManagerInterface $manager, PanierService $panierService){
+     * @Route("/order", name="order")
+     *
+     */
+    public function order(EntityManagerInterface $manager, PanierService $panierService)
+    {
 
-        $order=new Order();
+        $order = new Order();
         $order->setUser($this->getUser());
         $order->setDate(new \DateTime());
 
 
-        $delivery=new Delivery();
+        $delivery = new Delivery();
 
         $delivery->setStatus(0);
         $delivery->setPredictedDate(new \DateTime('now +3day'));
         $order->setDelivery($delivery);
 
 
-        $panier=$panierService->fullCart();
+        $panier = $panierService->fullCart();
 
-        foreach ($panier as $item=>$value):
-            $achat=new Detail();
+        foreach ($panier as $item => $value):
+            $achat = new Detail();
             $achat->setProduct($value['product']);
             $achat->setQuantity($value['quantity']);
             $achat->setOrders($order);
             $manager->persist($achat);
         endforeach;
-           $manager->persist($order);
-           $manager->persist($delivery);
-           $manager->flush();
-           $panierService->destroy();
-           $this->addFlash('success', 'Merci pour votre achat, suivez votre commande dans votre espace membre');
+        $manager->persist($order);
+        $manager->persist($delivery);
+        $manager->flush();
+        $panierService->destroy();
+        $this->addFlash('success', 'Merci pour votre achat, suivez votre commande dans votre espace membre');
 
-       return $this->redirectToRoute('home', [
-       ]);
+        return $this->redirectToRoute('home', [
+        ]);
 
     }
 
     /**
-    *@Route("/listOrder", name="listOrder")
-    *
-    */
-    public function listOrder(OrderRepository $repository){
+     * @Route("/listOrder", name="listOrder")
+     *
+     */
+    public function listOrder(OrderRepository $repository)
+    {
 
-        $orders= $repository->findAll();
+        $orders = $repository->findAll();
 
-       return $this->render('admin/listOrder.html.twig', [
-           'orders'=>$orders
-       ]);
+        return $this->render('admin/listOrder.html.twig', [
+            'orders' => $orders
+        ]);
     }
 
     /**
-    *@Route("/detailOrder/{id}", name="detailOrder")
-    *
-    */
-    public function detailOrder(Order $order){
+     * @Route("/detailOrder/{id}", name="detailOrder")
+     *
+     */
+    public function detailOrder(OrderRepository $orderRepository, DeliveryRepository $deliveryRepository, Request $request, EntityManagerInterface $manager, $id)
+    {
+
+        $order = $orderRepository->find($id);
+
+        if (!empty($_POST)):
+            // dd($_POST);
+            $delivery = $order->getDelivery();
+            $predictedDate = $request->request->get('predictedDate');
+            $status = $request->request->get('status');
+            $delivery->setPredictedDate(new \DateTime($predictedDate));
+            $delivery->setStatus($status);
+            $manager->persist($delivery);
+            $manager->flush();
+            $this->addFlash('success', 'Livraison mise à jour');
+            return $this->render('admin/detailOrder.html.twig', [
+                'order' => $order
+            ]);
 
 
-       return $this->render('admin/detailOrder.html.twig', [
-           'order'=>$order
-       ]);
+        endif;
+
+
+        return $this->render('admin/detailOrder.html.twig', [
+            'order' => $order
+        ]);
     }
 
+    /**
+     * @Route("/listPromo", name="listPromo")
+     *
+     */
+    public function listPromo(PromoRepository $repository)
+    {
+        $promos=$repository->findBy([],['startDate'=>'DESC']);
+
+       //dd($promos);
+
+        return $this->render('admin/listPromo.html.twig', [
+            'promos'=>$promos
+        ]);
+    }
+
+    /**
+     * @Route("/addPromo/{param}", name="addPromo")
+     *
+     */
+    public function addPromo(CategoryRepository $subCategoryRepository, SubCategoryRepository $categoryRepository, Request $request, EntityManagerInterface $manager, ProductRepository $productRepository, $param)
+    {
+
+        $categories = $categoryRepository->findAll();
+        $subCategories = $subCategoryRepository->findAll();
+
+        if (!empty($_POST)):
+
+            $code = $request->request->get('code');
+            $startDate = $request->request->get('startDate');
+            $endDate = $request->request->get('endDate');
+            $type = $request->request->get('type');
+            $value = $request->request->get('value');
+
+            $promo = new Promo();
+            $promo->setCode($code);
+            $promo->setType($type);
+            $promo->setValue($value);
+
+            //dd($_POST);
+            if (empty($startDate)):
+                $promo->setStartDate(null);
+            else:
+                $promo->setStartDate(new \DateTime($startDate));
+            endif;
+
+            if (empty($endDate)):
+                $promo->setEndDate(null);
+            else:
+                $promo->setEndDate(new \DateTime($endDate));
+            endif;
+
+            if ($param == 'section'):
+                $products = $productRepository->findBy(['gender' => $request->request->get('section')]);
+
+            $promo->setSection($request->request->get('section'));
+
+                foreach ($products as $product):
+                    $product->setPromo($promo);
+                    $manager->persist($product);
+
+                endforeach;
 
 
+            endif;
+            if ($param == 'category'):
+                $category = $categoryRepository->find($request->request->get('category'));
+                $promo->setSubCategory($category);
+
+            endif;
+            if ($param == 'subCategory'):
+                $subCategory = $subCategoryRepository->find($request->request->get('subCategory'));
+                $promo->setCategory($subCategory);
+
+            endif;
+            $manager->persist($promo);
+            $manager->flush();
+
+            $this->addFlash('success', 'Code promo ajouté');
+            return $this->redirectToRoute('listPromo');
+
+        endif;
+
+        return $this->render('admin/addPromo.html.twig', [
+            'param' => $param,
+            'categories' => $categories,
+            'subCategories' => $subCategories
+        ]);
+    }
+
+    /**
+    *@Route("/editPromo/{id}", name="editPromo")
+    *
+    */
+    public function editPromo(CategoryRepository $subCategoryRepository, SubCategoryRepository $categoryRepository, Request $request, EntityManagerInterface $manager, ProductRepository $productRepository,PromoRepository $promoRepository, $id){
+
+        $categories = $categoryRepository->findAll();
+        $subCategories = $subCategoryRepository->findAll();
+
+        $promo=$promoRepository->find($id);
+        if ($promo->getCategory() !== null):
+           $param='subCategory';
+        endif;
+        if ($promo->getSubCategory() !== null):
+            $param='category';
+        endif;
+        if ($promo->getSection() !== null):
+            $param='section';
+        endif;
+
+        if (!empty($_POST)):
 
 
+        endif;
 
 
-
+       return $this->render('admin/editPromo.html.twig', [
+           'promo'=>$promo,
+           'param'=>$param,
+           'categories' => $categories,
+           'subCategories' => $subCategories
+       ]);
+    }
 
 
 }

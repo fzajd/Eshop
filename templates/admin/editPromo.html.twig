@@ -1,0 +1,81 @@
+{% extends 'panelAdmin.html.twig' %}
+
+{% block title %}
+
+{% endblock %}
+
+{% block body %}
+
+    <form class="mb-5" action="{{ path('editPromo', { id: promo.id}) }}" method="post" >
+        <div class="mb-3">
+            <label for="exampleInputEmail1" class="form-label">Code promo</label>
+            <input type="text" name="code" value="{{ promo.code }}" class="form-control" id="exampleInputEmail1" aria-describedby="emailHelp">
+        </div>
+        <div class="mb-3">
+            <label for="exampleInputEmail1" class="form-label">Date de début</label>
+            <input type="date" name="startDate" {% if promo.startDate is not null %} value="{{ promo.startDate | date('Y-m-d')}}" {% else %} value=null {% endif %}  class="form-control" id="exampleInputEmail1" aria-describedby="emailHelp">
+        </div>
+        <div class="mb-3">
+            <label for="exampleInputEmail1" class="form-label">Date de fin</label>
+            <input type="date" name="endDate" {% if promo.endDate is not null %} value="{{ promo.endDate | date('Y-m-d')}}" {% else %} value=null {% endif %} class="form-control" id="exampleInputEmail1" aria-describedby="emailHelp">
+        </div>
+        <div class="mb-3">
+            <label for="exampleInputEmail1" class="form-label">Valeur</label>
+            <input type="number" name="value" value="{{ promo.value }}" class="form-control" id="exampleInputEmail1" aria-describedby="emailHelp">
+        </div>
+        <div class="mb-3">
+            <label for="exampleInputEmail1" class="form-label">Type</label>
+            <select class="form-select" name="type" aria-label="Default select example">
+                <option {% if promo.type == 0 %} selected {% endif%} value="0">Remise en pourcentage</option>
+                <option {% if promo.type == 1 %} selected {% endif%} value="1">Remise fixe</option>
+            </select>
+        </div>
+
+        {% if param== 'section' %}
+
+            <div class="mb-3">
+                <label for="exampleInputEmail1" class="form-label">Cible</label>
+                <select class="form-select" name="section" aria-label="Default select example">
+                    <option {% if promo.section == 'femme' %} selected {% endif%} value="femme">Femme</option>
+                    <option {% if promo.section == 'enfant' %} selected {% endif%} value="enfant">Enfant</option>
+                    <option {% if promo.section == 'homme' %} selected {% endif%} value="homme">Homme</option>
+                </select>
+            </div>
+        {% endif %}
+
+        {% if param== 'category' %}
+
+            <div class="mb-3">
+                <label for="exampleInputEmail1" class="form-label">Cible</label>
+                <select class="form-select" name="category" aria-label="Default select example">
+                    <option selected>sélectionner la cible visée</option>
+                    {% for category in categories %}
+                        <option {% if promo.subCategory.id == category.id %} selected {% endif%} value="{{ category.id }}">{{ category.title }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+        {% endif %}
+
+        {% if param=='subCategory' %}
+
+            <div class="mb-3">
+                <label for="exampleInputEmail1" class="form-label">Cible</label>
+                <select class="form-select" name="subCategory" aria-label="Default select example">
+                    <option selected>sélectionner la cible visée</option>
+                    {% for subCategory in subCategories %}
+                        <option {% if promo.category.id == subCategory.id %} selected {% endif%} value="{{ subCategory.id }}">{{ subCategory.title }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+        {% endif %}
+
+
+
+
+        <button type="submit" class="btn btn-primary">
+            Valider
+
+        </button>
+    </form>
+{% endblock %}
+

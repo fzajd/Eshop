@@ -78,6 +78,18 @@
                     </div>
                 </div>
             </li>
+            <li class="nav-item ms-2 mt-3">
+                <div class="btn-group" role="group" aria-label="Button group with nested dropdown">
+                    <a href="" class="btn btn-primary  active">Gestion codes promo</a>
+                    <div class="btn-group" role="group">
+                        <button id="btnGroupDrop1" type="button" class="btn btn-primary dropdown-toggle" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false"></button>
+                        <div class="dropdown-menu" aria-labelledby="btnGroupDrop1" style="">
+                            <a class="dropdown-item" href="{{ path('listPromo') }}">Liste des codes promos</a>
+
+                        </div>
+                    </div>
+                </div>
+            </li>
 
         </ul>
     </div>
@@ -86,6 +98,19 @@
         <div class="row justify-content-center mt-4 mb-4">
             <div class="col text-center"><h1>{% block titre %}{% endblock %}</h1></div>
         </div>
+        {% for message in app.flashes('success') %}
+            <div class="alert alert-success text-center mx-auto">
+                {{ message }}
+            </div>
+
+        {% endfor %}
+        {% for message in app.flashes('danger') %}
+            <div class="alert alert-danger text-center mx-auto">
+                {{ message }}
+            </div>
+
+        {% endfor %}
+
         {% block body %}
 
         {% endblock %}

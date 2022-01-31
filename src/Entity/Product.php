@@ -81,6 +81,11 @@ class Product
      */
     private $details;
 
+    /**
+     * @ORM\ManyToOne(targetEntity=Promo::class, inversedBy="products")
+     */
+    private $promo;
+
     public function __construct()
     {
         $this->details = new ArrayCollection();
@@ -213,6 +218,18 @@ class Product
                 $detail->setProduct(null);
             }
         }
+
+        return $this;
+    }
+
+    public function getPromo(): ?Promo
+    {
+        return $this->promo;
+    }
+
+    public function setPromo(?Promo $promo): self
+    {
+        $this->promo = $promo;
 
         return $this;
     }

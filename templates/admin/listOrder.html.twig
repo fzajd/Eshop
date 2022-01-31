@@ -30,7 +30,13 @@
 
             <td>{{ total }} €</td>
             <td>{{ order.user.lastName }} {{ order.user.firstName }}</td>
-            <td>{{ order.de }}</td>
+            <td>
+                {% if order.delivery.status == 0 %} Non traité  {% endif %}
+                {% if  order.delivery.status == 1 %} En préparation {% endif %}
+                {% if  order.delivery.status == 2 %} Expédié {% endif %}
+                {% if order.delivery.status == 3  %} Livré {% endif %}
+                {% if  order.delivery.status == 4 %} Annulé {% endif %}
+            </td>
             <td><a href="{{ path('detailOrder', {'id': order.id }) }}" class="btn btn-light">Voir le Détail</a></td>
         </tr>
         {% endfor %}

@@ -1,0 +1,83 @@
+{% extends 'panelAdmin.html.twig' %}
+
+{% block body %}
+
+
+    <a href="{{ path('addPromo', { param: 'category' }) }}" class="btn btn-primary">AJouter promo catégorie</a>
+    <a href="{{ path('addPromo', { param: 'subCategory' }) }}" class="btn btn-primary">Ajouter promo sous-category</a>
+    <a href="{{ path('addPromo', { param: 'section' }) }}" class="btn btn-primary">Ajouter promo section</a>
+
+    <table class="table table-dark mt-3">
+        <thead>
+        <tr>
+            <th scope="col">#</th>
+            <th scope="col">Code promo</th>
+            <th scope="col">Valeur</th>
+            <th scope="col">Type</th>
+            <th scope="col">Date de début</th>
+            <th scope="col">Date de fin</th>
+            <th scope="col">Cible</th>
+            <th scope="col">Actions</th>
+        </tr>
+        </thead>
+        <tbody>
+
+
+        {% for promo in promos %}
+
+
+            <tr>
+                <th scope="row">{{ promo.id }}</th>
+                <td>{{ promo.code }}</td>
+                <td>{{ promo.value }}</td>
+                <td>
+                    {% if promo.type ==0 %} % {% endif %}
+                    {% if promo.type ==1 %} € {% endif %}
+                </td>
+                <td>
+                    {% if promo.startDate is not null %}{{ promo.startDate | date('d/m/Y') }}{% endif %}
+                </td>
+                <td>
+                    {% if promo.endDate is not null %}{{ promo.endDate | date('d/m/Y') }}{% endif %}
+                </td>
+                <td>
+                    {% if promo.category is not null %}
+                        {{ promo.category.title }}
+                    {% endif %}
+                    {% if promo.subCategory is not null %}
+                        {{ promo.subCategory.title }}
+                    {% endif %}
+                    {% if promo.section is not null %}
+                        {{ promo.section }}
+                    {% endif %}
+
+                </td>
+                <td>
+                    <a href="{{ path('editPromo', {'id': promo.id }) }}"><img src="{{ asset('update.png') }}" alt="modifier"></a>
+                    <a href="" onclick="return confirm('Etes-vous de vouloir supprimer cette categorie')"><img
+                                src="{{ asset('delete.png') }}" alt="supprimer"></a>
+                </td>
+            </tr>
+        {% endfor %}
+
+
+        </tbody>
+    </table>
+
+
+
+
+
+
+
+{% endblock %}
+
+{% block title %}
+    {{ parent() }}
+{% endblock %}
+
+{% block titre %}
+
+{% endblock %}
+
+

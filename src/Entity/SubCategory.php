@@ -29,6 +29,11 @@ class SubCategory
      */
     private $category;
 
+    /**
+     * @ORM\OneToOne(targetEntity=Promo::class, mappedBy="subCategory", cascade={"persist", "remove"})
+     */
+    private $promo;
+
     public function __construct()
     {
         $this->category = new ArrayCollection();
@@ -79,6 +84,28 @@ class SubCategory
                 $category->setSubCategory(null);
             }
         }
+
+        return $this;
+    }
+
+    public function getPromo(): ?Promo
+    {
+        return $this->promo;
+    }
+
+    public function setPromo(?Promo $promo): self
+    {
+        // unset the owning side of the relation if necessary
+        if ($promo === null && $this->promo !== null) {
+            $this->promo->setSubCategory(null);
+        }
+
+        // set the owning side of the relation if necessary
+        if ($promo !== null && $promo->getSubCategory() !== $this) {
+            $promo->setSubCategory($this);
+        }
+
+        $this->promo = $promo;
 
         return $this;
     }

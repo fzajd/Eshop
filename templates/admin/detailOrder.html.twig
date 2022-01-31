@@ -1,6 +1,57 @@
 {% extends 'panelAdmin.html.twig' %}
 
 {% block body %}
+    <div class="border border-dark border-3 text-center rounded  p-3 mb-3">
+        <h5 >Gestion livraison :</h5>
+        <div class="row justify-content-around mt-3">
+            <div class="col-md-6 border-dark border-end"><h6 class="fw-bold">Informations client:</h6>
+                <p>Nom: {{ order.user.lastName }}</p>
+                <p>Prénom: {{ order.user.firstName }}</p>
+                <p>N° de Voie: {{ order.user.streetNumber }}</p>
+                <p>Voie: {{ order.user.street }}</p>
+                <p>Code postal: {{ order.user.zipCode }}</p>
+                <p>Ville: {{ order.user.city }}</p>
+                <p>Email: {{ order.user.email }}</p>
+                <p>Téléphone: 0{{ order.user.phone }}</p>
+
+
+            </div>
+            <div class="col-md-6"><h6 class="fw-bold">Statut de livraison:</h6>
+
+                <form class="mb-5" action="{{ path('detailOrder', {  id: order.id }) }}" method="post" >
+                    <div class="mb-3">
+                        <label for="exampleInputEmail1" class="form-label">Date de livraison</label>
+                        <input type="date" name="predictedDate" value="{{ order.delivery.predictedDate | date('Y-m-d') }}" class="form-control" id="exampleInputEmail1" aria-describedby="emailHelp">
+                    </div>
+                    <div class="mb-3">
+                        <label for="exampleInputEmail1" class="form-label">Statut</label>
+                    <select class="form-select" name="status" aria-label="Default select example">
+                        <option selected>modifier le statut</option>
+                        <option value="1">En préparation</option>
+                        <option value="2"> Expédié </option>
+                        <option value="3">Livré </option>
+                        <option value="4">Annulé </option>
+                    </select>
+            </div>
+                    <button type="submit" class="btn btn-primary">
+                        Mettre à jour
+
+                    </button>
+                </form>
+
+                <p>Date prévu de livraison: {{ order.delivery.predictedDate | date('d-m-Y') }}</p>
+                <p>Statut:
+                    {% if order.delivery.status == 0 %} Non traité  {% endif %}
+                    {% if  order.delivery.status == 1 %} En préparation {% endif %}
+                    {% if  order.delivery.status == 2 %} Expédié {% endif %}
+                    {% if order.delivery.status == 3  %} Livré {% endif %}
+                    {% if  order.delivery.status == 4 %} Annulé {% endif %}
+                </p>
+            </div>
+        </div>
+
+
+    </div>
 
     <table class="table table-dark">
         <thead>
@@ -15,7 +66,7 @@
             <th scope="col">Quantité</th>
             <th scope="col">Montant total</th>
 
-            <th scope="col">Actions</th>
+
         </tr>
         </thead>
         <tbody>
@@ -36,9 +87,7 @@
                 {% set total=detail.product.price * detail.quantity %}
                 <td>{{  detail.quantity }}</td>
                 <td>{{ total | format_currency('EUR') }}</td>
-                <td>
-                    <a href="" class="btn btn-dark">Gérer la livraison</a>
-                </td>
+
             </tr>
 
         {% endfor %}
@@ -51,12 +100,12 @@
 {% endblock %}
 
 {% block title %}
-    {{ parent() }}Liste des produits
+    {{ parent() }}
 {% endblock %}
 
 
 {% block titre %}
 
-    Liste des produits
+
 {% endblock %}
 
