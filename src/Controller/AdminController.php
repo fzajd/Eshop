@@ -17,6 +17,7 @@ use App\Repository\DeliveryRepository;
 use App\Repository\OrderRepository;
 use App\Repository\ProductRepository;
 use App\Repository\PromoRepository;
+use App\Repository\StockRepository;
 use App\Repository\SubCategoryRepository;
 use App\Service\Panier\PanierService;
 use Doctrine\ORM\EntityManagerInterface;
@@ -407,12 +408,12 @@ class AdminController extends AbstractController
      */
     public function listPromo(PromoRepository $repository)
     {
-        $promos=$repository->findBy([],['startDate'=>'DESC']);
+        $promos = $repository->findBy([], ['startDate' => 'DESC']);
 
-       //dd($promos);
+        //dd($promos);
 
         return $this->render('admin/listPromo.html.twig', [
-            'promos'=>$promos
+            'promos' => $promos
         ]);
     }
 
@@ -455,7 +456,7 @@ class AdminController extends AbstractController
             if ($param == 'section'):
                 $products = $productRepository->findBy(['gender' => $request->request->get('section')]);
 
-            $promo->setSection($request->request->get('section'));
+                $promo->setSection($request->request->get('section'));
 
                 foreach ($products as $product):
                     $product->setPromo($promo);
@@ -491,16 +492,17 @@ class AdminController extends AbstractController
     }
 
     /**
-    *@Route("/editPromo/{id}/{param}", name="editPromo")
+     * @Route("/editPromo/{id}/{param}", name="editPromo")
      *
-    *
-    */
-    public function editPromo(CategoryRepository $subCategoryRepository, SubCategoryRepository $categoryRepository, Request $request, EntityManagerInterface $manager, ProductRepository $productRepository,PromoRepository $promoRepository, $id, $param){
+     *
+     */
+    public function editPromo(CategoryRepository $subCategoryRepository, SubCategoryRepository $categoryRepository, Request $request, EntityManagerInterface $manager, ProductRepository $productRepository, PromoRepository $promoRepository, $id, $param)
+    {
 
         $categories = $categoryRepository->findAll();
         $subCategories = $subCategoryRepository->findAll();
 
-        $promo=$promoRepository->find($id);
+        $promo = $promoRepository->find($id);
 
 
         if (!empty($_POST)):
@@ -551,7 +553,7 @@ class AdminController extends AbstractController
             endif;
             if ($param == 'subCategory'):
                 $promo->setSubCategory(null);
-               $promo->setSection(null);
+                $promo->setSection(null);
                 $subCategory = $subCategoryRepository->find($request->request->get('subCategory'));
                 $promo->setCategory($subCategory);
 
@@ -566,27 +568,94 @@ class AdminController extends AbstractController
         endif;
 
 
-       return $this->render('admin/editPromo.html.twig', [
-           'promo'=>$promo,
-           'param'=>$param,
-           'categories' => $categories,
-           'subCategories' => $subCategories
-       ]);
+        return $this->render('admin/editPromo.html.twig', [
+            'promo' => $promo,
+            'param' => $param,
+            'categories' => $categories,
+            'subCategories' => $subCategories
+        ]);
     }
 
 
     /**
-    *@Route("/deletePromo/{id}", name="deletePromo")
-    *
-    */
-    public function deletePromo(PromoRepository $promoRepository, EntityManagerInterface $manager, $id){
+     * @Route("/deletePromo/{id}", name="deletePromo")
+     *
+     */
+    public function deletePromo(PromoRepository $promoRepository,ProductRepository $productRepository, EntityManagerInterface $manager, $id)
+    {
 
-        $promo=$promoRepository->find($id);
+        $promo = $promoRepository->find($id);
+
+
+        if ($promo->getSection() !== null):
+
+            $products=$productRepository->findBy(['gender'=>$promo->getSection()]);
+
+        foreach ($products as $product):
+            $product->setPromo(null);
+            $manager->persist($product);
+            endforeach;
+        endif;
+
+
         $manager->remove($promo);
         $manager->flush();
         $this->addFlash('success', 'Code promo supprimé');
 
-       return $this->redirectToRoute('listPromo');
+        return $this->redirectToRoute('listPromo');
+    }
+
+    /**
+    *@Route("/stock", name="stock")
+    *
+    */
+    public function stock(ProductRepository $productRepository){
+
+        $products=$productRepository->findAll();
+
+
+       return $this->render('admin/stock.html.twig', [
+           'products'=>$products
+       ]);
+    }
+
+    /**
+    *@Route("/addStock/{id}", name="addStock")
+    *
+    */
+    public function addStock(){
+
+
+       return $this->render('admin/addStock.html.twig', [
+       ]);
+    }
+
+    /**
+    *@Route("/listStock", name="listStock")
+    *
+    */
+    public function listStock(StockRepository $stockRepository){
+
+        $stocks=$stockRepository->findBy([], ['product'=>'ASC']);
+
+       return $this->render('admin/listStock.html.twig', [
+           'stocks'=>$stocks
+       ]);
+    }
+
+    /**
+    *@Route("/searchRef", name="searchRef")
+    *
+    */
+    public function searchRef(Request $request, ProductRepository $productRepository){
+
+        $search=$request->request->get('search');
+        $products=$productRepository->findBySearch($search);
+
+
+       return $this->render('admin/stock.html.twig', [
+           'products'=>$products
+       ]);
     }
 
 

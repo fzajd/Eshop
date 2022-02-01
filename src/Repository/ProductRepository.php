@@ -37,6 +37,18 @@ class ProductRepository extends ServiceEntityRepository
         ;
     }
 
+    public function findBySearch($search)
+    {
+        return $this->createQueryBuilder('p')
+            ->andWhere('p.reference LIKE :val')
+            ->setParameter('val', '%'.$search.'%')
+            ->orWhere('p.title LIKE :gender')
+            ->setParameter('gender','%'.$search.'%')
+            ->getQuery()
+            ->getResult()
+            ;
+    }
+
 
     public function findByPriceSubCategory($price, $gender, $subCat)
     {

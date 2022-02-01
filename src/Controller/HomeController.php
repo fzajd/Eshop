@@ -8,6 +8,7 @@ use App\Form\CategoryType;
 use App\Form\ProductType;
 use App\Repository\CategoryRepository;
 use App\Repository\ProductRepository;
+use App\Repository\PromoRepository;
 use App\Repository\SubCategoryRepository;
 use App\Service\Panier\PanierService;
 use Doctrine\ORM\EntityManagerInterface;
@@ -147,13 +148,15 @@ class HomeController extends AbstractController
     public function cart(PanierService $panierService)
     {
 
+        $affiche=true;
         $items = $panierService->fullCart();
         $total = $panierService->Total();
 
         return $this->render('home/cart.html.twig', [
             'items' => $items,
             'total' => $total,
-            'titre' => 'Mon panier'
+            'titre' => 'Mon panier',
+            'affiche'=>$affiche
 
         ]);
     }
@@ -187,72 +190,72 @@ class HomeController extends AbstractController
         $products = $productRepository->findBy(['gender' => $param], ['price' => 'ASC']);
         //dd($request->request);
 
-        $sousCategories="";
-        $prixmax=0;
+        $sousCategories = "";
+        $prixmax = 0;
 
         if (!empty($_POST)):
             $param = $request->request->get('section');
-            $prixmax=$request->request->get('prixmax');
+            $prixmax = $request->request->get('prixmax');
             // etape 1 txt
-            if (isset($_POST['cat']) && $_POST['cat']!=='all'):
+            if (isset($_POST['cat']) && $_POST['cat'] !== 'all'):
 
-                $categories =$categoryRepository->find($request->request->get('cat')) ;
-            //dd($cat);
+                $categories = $categoryRepository->find($request->request->get('cat'));
+                //dd($cat);
                 $affichage = 'sousCategorie';
-                $sousCategories=$subcategoryRepository->findBy(['subCategory'=>$categories]);
+                $sousCategories = $subcategoryRepository->findBy(['subCategory' => $categories]);
                 //dd($sousCategories);
             endif;
             // etape 2 txt
-            if (isset($_POST['subCat']) && $_POST['subCat']!=='all'):
-                $subCat =$subcategoryRepository->find($request->request->get('subCat')) ;
+            if (isset($_POST['subCat']) && $_POST['subCat'] !== 'all'):
+                $subCat = $subcategoryRepository->find($request->request->get('subCat'));
 
                 $affichage = 'sousCategorie';
-                $sousCategories=$subcategoryRepository->findBy(['subCategory'=>$subCat->getSubCategory()]);
+                $sousCategories = $subcategoryRepository->findBy(['subCategory' => $subCat->getSubCategory()]);
             endif;
 
             //dd($_POST);
 
 
             // user n'a rien saisi
-           if (isset($_POST['cat']) && $_POST['cat']=='all' && $_POST['prixmax']=='0' ):
+            if (isset($_POST['cat']) && $_POST['cat'] == 'all' && $_POST['prixmax'] == '0'):
 
-            $products = $productRepository->findBy(['gender' => $param], ['price' => 'ASC']);
+                $products = $productRepository->findBy(['gender' => $param], ['price' => 'ASC']);
 
             endif;
 
             // user a séléctionnez la catégorie mais pas de prix
-          if (isset($_POST['cat']) && $_POST['cat'] !=='all' && $_POST['prixmax']=='0'):
-            //dd($cat);
+            if (isset($_POST['cat']) && $_POST['cat'] !== 'all' && $_POST['prixmax'] == '0'):
+                //dd($cat);
 
-            $products = $productRepository->findByCategory( $param, $categories);
-
-          endif;
-
-            // user a selectionné le prix mais pas la catégorie
-           if (isset($_POST['cat']) && $_POST['cat'] =='all' && $_POST['prixmax'] !== '0'):
-
-            $products=$productRepository->findByPrice($prixmax, $param);
+                $products = $productRepository->findByCategory($param, $categories);
 
             endif;
 
-             //user a selectionné le prix et la categorie
-            if (isset($_POST['cat']) && $_POST['cat'] !=='all' && $_POST['prixmax'] !=='0'):
+            // user a selectionné le prix mais pas la catégorie
+            if (isset($_POST['cat']) && $_POST['cat'] == 'all' && $_POST['prixmax'] !== '0'):
+
+                $products = $productRepository->findByPrice($prixmax, $param);
+
+            endif;
+
+            //user a selectionné le prix et la categorie
+            if (isset($_POST['cat']) && $_POST['cat'] !== 'all' && $_POST['prixmax'] !== '0'):
                 //dd($prixmax);
-                $products=$productRepository->findByCategoryPrice( $param,$categories, $prixmax);
+                $products = $productRepository->findByCategoryPrice($param, $categories, $prixmax);
                 //dd($products);
             endif;
 
             // user a séléctionnez la souscatégorie mais pas de prix
-            if (isset($_POST['subCat']) && $_POST['subCat'] !=='all' && $_POST['prixmax']=='0'):
-                $products = $productRepository->findBy(['category'=>$subCat]);
-                endif;
+            if (isset($_POST['subCat']) && $_POST['subCat'] !== 'all' && $_POST['prixmax'] == '0'):
+                $products = $productRepository->findBy(['category' => $subCat]);
+            endif;
             // user a selectionné le prix mais pas la souscatégorie
-            if (isset($_POST['subCat']) && $_POST['subCat'] =='all' && $_POST['prixmax'] !== '0'):
-                $products=$productRepository->findByPrice($prixmax, $param);
+            if (isset($_POST['subCat']) && $_POST['subCat'] == 'all' && $_POST['prixmax'] !== '0'):
+                $products = $productRepository->findByPrice($prixmax, $param);
             endif;
             // user a selectionné le prix et la souscategorie
-            if (isset($_POST['subCat']) && $_POST['subCat'] !=='all' && $_POST['prixmax'] !=='0'):
-                $products=$productRepository->findByPriceSubCategory(  $prixmax,$param,$subCat);
+            if (isset($_POST['subCat']) && $_POST['subCat'] !== 'all' && $_POST['prixmax'] !== '0'):
+                $products = $productRepository->findByPriceSubCategory($prixmax, $param, $subCat);
             endif;
 
             return $this->render('home/filterProduct.html.twig', [
@@ -260,8 +263,8 @@ class HomeController extends AbstractController
                 'categories' => $categories,
                 'affichage' => $affichage,
                 'param' => $param,
-                'sousCategories'=>$sousCategories,
-                'prixmax'=>$prixmax
+                'sousCategories' => $sousCategories,
+                'prixmax' => $prixmax
             ]);
 
         endif;
@@ -272,9 +275,96 @@ class HomeController extends AbstractController
             'categories' => $categories,
             'affichage' => $affichage,
             'param' => $param,
-            'sousCategories'=>$sousCategories,
-            'prixmax'=>$prixmax
+            'sousCategories' => $sousCategories,
+            'prixmax' => $prixmax
         ]);
+    }
+
+    /**
+     * @Route("/verifPromo", name="verifPromo")
+     *
+     */
+    public function verifPromo(Request $request, PromoRepository $promoRepository, PanierService $panierService)
+    {
+
+        $affiche=true;
+        if (!empty($_POST)):
+            $code = $request->request->get('code');
+            $promo = $promoRepository->findOneBy(['code' => $code]);
+
+            if ($promo):
+                $start = $promo->getStartDate();
+                $end = $promo->getEndDate();
+                //   dd($start < new \DateTime());
+                if ($start <= new \DateTime() && $end >= new \DateTime()):
+                    $remise = 0;
+                    $panier = $panierService->fullCart();
+
+
+                    if ($promo->getSection() !== null):
+                        if ($promo->getType() == 0):
+                            foreach ($panier as $item):
+                                if ($promo->getSection() == $item['product']->getGender()):
+                                    $remise += $item['quantity']*$item['product']->getPrice() * $promo->getValue() / 100;
+                                endif;
+                            endforeach;
+                        else:
+                            $remise = $promo->getValue();
+                        endif;
+                    endif;
+                    if ($promo->getCategory() !== null):
+                        if ($promo->getType() == 0):
+                            foreach ($panier as $item):
+                                if ($promo->getCategory() == $item['product']->getCategory()):
+                                    $remise += $item['quantity']*$item['product']->getPrice() * $promo->getValue() / 100;
+                                endif;
+                            endforeach;
+                        else:
+                            $remise = $promo->getValue();
+                        endif;
+                    endif;
+                    if ($promo->getSubCategory() !== null):
+                        if ($promo->getType() == 0):
+                            foreach ($panier as $item):
+                                if ($promo->getSubCategory() == $item['product']->getCategory()->getSubCategory()):
+                                    $remise += $item['quantity']*$item['product']->getPrice() * $promo->getValue() / 100;
+                                endif;
+                            endforeach;
+                        else:
+                            $remise = $promo->getValue();
+                        endif;
+                    endif;
+                    if ($remise!==0):
+                    $affiche=false;
+                    $this->addFlash('success', 'votre remise est appliquée');
+                        endif;
+                        $total=$panierService->Total();
+                        $totalRemise=$total-$remise;
+                    return $this->render('home/cart.html.twig', [
+                        'remise'=>$remise,
+                        'affiche'=>$affiche,
+                        'items'=>$panier,
+                        'total'=>$total,
+                        'totalRemise'=>$totalRemise
+
+                    ]);
+
+
+                else:
+                    $this->addFlash('danger', 'Code promo invalide');
+                    return $this->redirectToRoute('cart');
+                endif;
+
+
+            else:
+                $this->addFlash('danger', 'Code promo invalide');
+                return $this->redirectToRoute('cart');
+            endif;
+
+        endif;
+
+
+        return $this->redirectToRoute('cart');
     }
 
 

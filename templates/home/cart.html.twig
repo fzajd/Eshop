@@ -50,7 +50,10 @@
             </tbody>
         </table>
 
-        <h3>Total : {{ total }} €</h3>
+        <h3>Total :   {% if totalRemise is defined %} <span style="text-decoration: line-through">{{ total }}</span>{% else %} {{ total}}    {% endif %}€</h3>
+        {% if totalRemise is defined %}
+            <h3>Après remise: {{ totalRemise }} € </h3>
+        {% endif %}
 
         <a href="{{ path('destroyCart') }}" class="btn btn-danger mt-5"  onclick="return confirm('Etes-vous de vouloir supprimer cet article de votre panier')"  >Vider le panier</a>
 
@@ -62,12 +65,25 @@
             <a href="{{ path('login') }}" class="btn btn-warning mt-5">Connectez vous pour passer à la commande</a>
 
         {% endif %}
+        {% if affiche is defined and affiche==true  %}
 
+
+        <form action="{{ path('verifPromo') }}" class="mt-4"  method="post"  >
+            <div class="row mb-3">
+                <label for="inputEmail3" class="col-sm-2 col-form-label">Code promo</label>
+                <div >
+                    <input type="text" name="code" class="form-control" placeholder="Vous avez un code promo?" id="inputEmail3">
+                </div>
+            </div>
+
+            <button type="submit" class="btn btn-primary">Verifier </button>
+        </form>
+    {% endif %}
 
     {% else %}
 
         <div class="text-center">
-            <h3>Votre panier est vider, allez vite consulter notre <a class="btn btn-success rounded"
+            <h3>Votre panier est vide, allez vite consulter notre <a class="btn btn-success rounded"
                                                                       href="{{ path('home') }}">catalogue</a></h3>
         </div>
 
@@ -78,12 +94,12 @@
 {% endblock %}
 
 {% block title %}
-    {{ parent() }}{{ titre }}
+    {{ parent() }}
 {% endblock %}
 
 
 {% block titre %}
 
-    {{ titre }}
+
 {% endblock %}
 

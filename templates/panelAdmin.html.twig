@@ -91,6 +91,43 @@
                 </div>
             </li>
 
+            <li class="nav-item ms-2 mt-3">
+                <div class="btn-group" role="group" aria-label="Button group with nested dropdown">
+                    <a href="" class="btn btn-primary  active">Gestion fournisseurs</a>
+                    <div class="btn-group" role="group">
+                        <button id="btnGroupDrop1" type="button" class="btn btn-primary dropdown-toggle" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false"></button>
+                        <div class="dropdown-menu" aria-labelledby="btnGroupDrop1" style="">
+                            <a class="dropdown-item" href="">Liste des fournisseurs</a>
+
+                        </div>
+                    </div>
+                </div>
+            </li>
+            <li class="nav-item ms-2 mt-3">
+                <div class="btn-group" role="group" aria-label="Button group with nested dropdown">
+                    <a href="" class="btn btn-primary  active">Gestion couleurs et tailles</a>
+                    <div class="btn-group" role="group">
+                        <button id="btnGroupDrop1" type="button" class="btn btn-primary dropdown-toggle" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false"></button>
+                        <div class="dropdown-menu" aria-labelledby="btnGroupDrop1" style="">
+                            <a class="dropdown-item" href="{{ path('listPromo') }}">Liste des couleur</a>
+                            <a class="dropdown-item" href="{{ path('listPromo') }}">Liste des tailles</a>
+                        </div>
+                    </div>
+                </div>
+            </li>
+            <li class="nav-item ms-2 mt-3">
+                <div class="btn-group" role="group" aria-label="Button group with nested dropdown">
+                    <a href="" class="btn btn-primary  active">Gestion Stocks</a>
+                    <div class="btn-group" role="group">
+                        <button id="btnGroupDrop1" type="button" class="btn btn-primary dropdown-toggle" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false"></button>
+                        <div class="dropdown-menu" aria-labelledby="btnGroupDrop1" style="">
+                            <a class="dropdown-item" href="{{ path('stock') }}">Gestion des stock</a>
+
+                        </div>
+                    </div>
+                </div>
+            </li>
+
         </ul>
     </div>
     <div class="col-md-9 bg-white table-responsive ">
