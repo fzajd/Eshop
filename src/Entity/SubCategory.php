@@ -30,7 +30,7 @@ class SubCategory
     private $category;
 
     /**
-     * @ORM\OneToOne(targetEntity=Promo::class, mappedBy="subCategory", cascade={"persist", "remove"})
+     * @ORM\OneToOne(targetEntity=Promo::class, mappedBy="subCategory")
      */
     private $promo;
 
@@ -76,17 +76,7 @@ class SubCategory
         return $this;
     }
 
-    public function removeCategory(Category $category): self
-    {
-        if ($this->category->removeElement($category)) {
-            // set the owning side to null (unless already changed)
-            if ($category->getSubCategory() === $this) {
-                $category->setSubCategory(null);
-            }
-        }
 
-        return $this;
-    }
 
     public function getPromo(): ?Promo
     {

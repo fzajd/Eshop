@@ -28,7 +28,7 @@ class Delivery
     private $predictedDate;
 
     /**
-     * @ORM\OneToOne(targetEntity=Order::class, mappedBy="delivery", cascade={"persist", "remove"})
+     * @ORM\OneToOne(targetEntity=Order::class, mappedBy="delivery")
      */
     private $orders;
 

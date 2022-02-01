@@ -35,7 +35,7 @@ class Category
     private $subCategory;
 
     /**
-     * @ORM\OneToOne(targetEntity=Promo::class, mappedBy="category", cascade={"persist", "remove"})
+     * @ORM\OneToOne(targetEntity=Promo::class, mappedBy="category")
      */
     private $promo;
 

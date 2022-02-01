@@ -559,7 +559,7 @@ class AdminController extends AbstractController
             $manager->persist($promo);
             $manager->flush();
 
-            $this->addFlash('success', 'Code promo ajouté');
+            $this->addFlash('success', 'Code promo modifié');
             return $this->redirectToRoute('listPromo');
 
 
@@ -572,6 +572,21 @@ class AdminController extends AbstractController
            'categories' => $categories,
            'subCategories' => $subCategories
        ]);
+    }
+
+
+    /**
+    *@Route("/deletePromo/{id}", name="deletePromo")
+    *
+    */
+    public function deletePromo(PromoRepository $promoRepository, EntityManagerInterface $manager, $id){
+
+        $promo=$promoRepository->find($id);
+        $manager->remove($promo);
+        $manager->flush();
+        $this->addFlash('success', 'Code promo supprimé');
+
+       return $this->redirectToRoute('listPromo');
     }
 
 

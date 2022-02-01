@@ -45,19 +45,22 @@ class Promo
     private $endDate;
 
     /**
-     * @ORM\OneToOne(targetEntity=Category::class, inversedBy="promo", cascade={"persist", "remove"})
+     * @ORM\OneToOne(targetEntity=Category::class, inversedBy="promo")
      */
     private $category;
 
     /**
-     * @ORM\OneToOne(targetEntity=SubCategory::class, inversedBy="promo", cascade={"persist", "remove"})
+     * @ORM\OneToOne(targetEntity=SubCategory::class, inversedBy="promo")
      */
     private $subCategory;
 
     /**
      * @ORM\OneToMany(targetEntity=Product::class, mappedBy="promo")
+     *
      */
     private $products;
+
+
 
     /**
      * @ORM\Column(type="string", length=255, nullable=true)
@@ -166,27 +169,7 @@ class Promo
         return $this->products;
     }
 
-    public function addProduct(Product $product): self
-    {
-        if (!$this->products->contains($product)) {
-            $this->products[] = $product;
-            $product->setPromo($this);
-        }
 
-        return $this;
-    }
-
-    public function removeProduct(Product $product): self
-    {
-        if ($this->products->removeElement($product)) {
-            // set the owning side to null (unless already changed)
-            if ($product->getPromo() === $this) {
-                $product->setPromo(null);
-            }
-        }
-
-        return $this;
-    }
 
     public function getSection(): ?string
     {

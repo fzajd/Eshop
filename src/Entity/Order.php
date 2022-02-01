@@ -36,7 +36,7 @@ class Order
     private $details;
 
     /**
-     * @ORM\OneToOne(targetEntity=Delivery::class, inversedBy="orders", cascade={"persist", "remove"})
+     * @ORM\OneToOne(targetEntity=Delivery::class, inversedBy="orders")
      */
     private $delivery;
 

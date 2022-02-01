@@ -29,6 +29,7 @@ class Detail
 
     /**
      * @ORM\ManyToOne(targetEntity=Product::class, inversedBy="details")
+     *
      */
     private $product;
 
