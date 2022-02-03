@@ -3,7 +3,10 @@
 namespace App\Form;
 
 use App\Entity\Category;
+use App\Entity\Color;
 use App\Entity\Product;
+use App\Entity\Size;
+use App\Entity\Suppliers;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
@@ -93,6 +96,38 @@ class ProductType extends AbstractType
                     'choice_label'=>'title'
 
                 ])
+                ->add('suppliers',EntityType::class,[
+                    'required' => false,
+                    'label' => false,
+                    'class'=>Suppliers::class,
+                    'choice_label'=>'title'
+
+                ])
+                ->add('colors',EntityType::class,[
+                    'required' => false,
+                    'label' => false,
+                    'class'=>Color::class,
+                    'choice_label'=>'title',
+                    'multiple'=>true,
+                    'attr'=>[
+                        'class'=>"select2",
+                        'data-placeholder'=>'Selectionnez une ou plusieurs couleurs'
+                    ]
+
+                ])
+                ->add('sizes',EntityType::class,[
+                    'required' => false,
+                    'label' => false,
+                    'class'=>Size::class,
+                    'choice_label'=>'title',
+                    'multiple'=>true,
+                    'attr'=>[
+                        'class'=>"select2",
+                        'data-placeholder'=>'Selectionnez une ou plusieurs tailles'
+                    ]
+
+                ])
+
                 ->add('Enregistrer', SubmitType::class);
 
         elseif ($options['edit'] == true):
@@ -165,6 +200,37 @@ class ProductType extends AbstractType
                         'Femme' => 'Femme',
                         'Enfant' => 'Enfant'
                     ]
+                ])
+                ->add('suppliers',EntityType::class,[
+                    'required' => false,
+                    'label' => false,
+                    'class'=>Suppliers::class,
+                    'choice_label'=>'title'
+
+                ])
+                ->add('colors',EntityType::class,[
+                    'required' => false,
+                    'label' => false,
+                    'class'=>Color::class,
+                    'choice_label'=>'title',
+                    'multiple'=>true,
+                    'attr'=>[
+                        'class'=>"select2",
+                        'data-placeholder'=>'Selectionnez une ou plusieurs couleurs'
+                    ]
+
+                ])
+                ->add('sizes',EntityType::class,[
+                    'required' => false,
+                    'label' => false,
+                    'class'=>Size::class,
+                    'choice_label'=>'title',
+                    'multiple'=>true,
+                    'attr'=>[
+                        'class'=>"select2",
+                        'data-placeholder'=>'Selectionnez une ou plusieurs tailles'
+                    ]
+
                 ])
                 ->add('Enregistrer', SubmitType::class);
 

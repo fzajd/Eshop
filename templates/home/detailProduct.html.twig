@@ -1,0 +1,61 @@
+{% extends 'base.html.twig' %}
+
+{% block body %}
+    <link rel="stylesheet" href="{{ asset('css/detail.css') }}">
+
+    <div class="container mt-5 mb-5">
+        <div class="row d-flex justify-content-center">
+            <div class="col-md-10">
+                <div class="card">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="images p-3">
+                                <div class="text-center p-4"> <img height="300" id="main-image" src="{{ asset('upload/') }}{{ product.picture }}" width="250" /> </div>
+{#                                <div class="thumbnail text-center"> <img onclick="change_image(this)" src="https://i.imgur.com/Rx7uKd0.jpg" width="70"> <img onclick="change_image(this)" src="https://i.imgur.com/Dhebu4F.jpg" width="70"> </div>#}
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="product p-4">
+                                <div class="d-flex justify-content-between align-items-center">
+                                    <a href="{{ path('home') }}" class="text-decoration-none" ><div class="d-flex align-items-center"> <i class="fa fa-long-arrow-left"></i> <span class="ml-1">Retour</span> </div></a>
+                                </div>
+                                <div class="mt-4 mb-3"> <span class="text-uppercase text-muted brand">{{ product.brand }}</span>
+                                    <h5 class="text-uppercase">{{ product.title }}</h5>
+                                    <div class="price d-flex flex-row align-items-center"> <span class="act-price">{{ product.price }} €</span>
+{#                                        <div class="ml-2"> <small class="dis-price">$59</small> <span>40% OFF</span> </div>#}
+                                    </div>
+                                </div>
+                                <p class="about">{{ product.description }}</p>
+                                <div class="sizes mt-5">
+                                    <h6 class="text-uppercase">Tailles</h6>
+                                    {% for taille in product.sizes  %}
+                                    <label class="radio"  {% if size is defined and  size == taille.id %} style="background-color: #5d5454;margin: 3px"  {% endif %}   ><a href="{{ path('addTempSize', {'size':  taille.id , 'id': product.id}) }}"> <span {% if size is defined and  size == taille.id %} style="color: white;margin: 3px"  {% endif %}  >{{ taille.title }}</span></a> </label>
+                                    {% endfor %}
+                                </div>
+
+                                <div class="sizes mt-2">
+                                    <h6 class="text-uppercase">Couleurs</h6>
+                                    {% for couleur in product.colors  %}
+                                        <label class="radio"> <a href="{{ path('addTempColor', {'color':  couleur.id , 'id': product.id}) }}"><div style="background-color:{{ couleur.colorCode }};border: 2px solid grey;width: 30px; min-height: 30px;
+                                                        {% if color is defined and  color == couleur.id %} transform: scale(1.2); margin: 3px  {% endif %} " ></div></a></label>
+                                    {% endfor %}
+                                </div>
+                                <div class="cart mt-4 align-items-center"> <a href="{{ path('addTempToCart', { id: product.id }) }}" class="btn btn-dark text-uppercase mr-2 px-4">Add to cart</a> <i class="fa fa-heart text-muted"></i>  </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+
+
+
+{% endblock %}
+
+{% block title %}
+
+{% endblock %}
+

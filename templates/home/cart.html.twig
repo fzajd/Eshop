@@ -3,7 +3,7 @@
 {% block body %}
     {% if items is not empty %}
 
-
+<div  style="overflow-x: auto;white-space: nowrap;"   >
         <table class="table table-dark">
             <thead>
             <tr>
@@ -12,6 +12,8 @@
                 <th scope="col">Prix</th>
                 <th scope="col">Photo</th>
                 <th scope="col">Marque</th>
+                <th scope="col">Taille</th>
+                <th scope="col">Couleur</th>
                 <th scope="col"><span class="btn btn-primary">-</span></th>
                 <th scope="col">quantité</th>
                 <th scope="col"><span class="btn btn-primary">+</span></th>
@@ -33,12 +35,14 @@
                              alt="{{ item.product.title }}">
                     </td>
                     <td>{{ item.product.brand }}</td>
-                    <td><a href="{{ path('removeCart', {'id': item.product.id }) }}" class="btn btn-primary">-</a></td>
+                    <td>{{ item.size.title }}</td>
+                    <td><div style="background-color:{{ item.color.colorCode }};border: 2px solid grey;width: 30px; min-height: 30px;" ></div></td>
+                    <td><a href="{{ path('removeCart', {'id': loop.index0 }) }}" class="btn btn-primary">-</a></td>
                     <td class="text-center "><a href="" class="btn btn-light text-dark">{{ item.quantity }}</a></td>
-                    <td><a href="{{ path('addCart', {'id': item.product.id, param: 'cart' }) }}"
+                    <td><a href="{{ path('addCart', {'id': loop.index0, param: 'cart' }) }}"
                            class="btn btn-primary">+</a></td>
                     <td class="text-center">
-                        <a href="{{ path('deleteCart', {'id': item.product.id }) }}"
+                        <a href="{{ path('deleteCart', {'id': loop.index0 }) }}"
                            onclick="return confirm('Etes-vous de vouloir supprimer cet article de votre panier')"><img
                                     src="{{ asset('delete.png') }}" alt="supprimer"></a>
                     </td>
@@ -49,7 +53,7 @@
 
             </tbody>
         </table>
-
+        </div>
         <h3>Total :   {% if totalRemise is defined %} <span style="text-decoration: line-through">{{ total }}</span>{% else %} {{ total}}    {% endif %}€</h3>
         {% if totalRemise is defined %}
             <h3>Après remise: {{ totalRemise }} € </h3>

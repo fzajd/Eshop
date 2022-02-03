@@ -12,6 +12,7 @@
 
 
 {% block body %}
+    <link rel="stylesheet" href="{{ asset('css/select2.css') }}">
 
     <div class="pb-5">
         {{ form_start(form) }}
@@ -38,6 +39,16 @@
 
         <label for="">Section</label>
         {{ form_widget(form.gender) }}
+
+        <label for="">Fournisseur</label>
+        {{ form_widget(form.suppliers) }}
+
+        <label for="">Couleurs</label>
+        {{ form_widget(form.colors) }}
+
+        <label for="">Tailles</label>
+        {{ form_widget(form.sizes) }}
+
 
         <label for="">Photo</label>
         {{ form_row(form.editPicture, { 'attr': { 'onChange': "loadFile(event)"}  }) }}
@@ -66,6 +77,14 @@
 
             image.src = URL.createObjectURL(event.target.files[0]);
         };
+    </script>
+    <script src="{{ asset('js/jquery.min.js') }}"></script>
+    <script src="{{ asset('js/select2.js') }}"></script>
+    <script>
+        $(function () {
+            $('.select2').select2()
+
+        })
     </script>
 
 

@@ -29,9 +29,20 @@ class Color
      */
     private $stock;
 
+    /**
+     * @ORM\Column(type="string", length=255, nullable=true)
+     */
+    private $colorCode;
+
+    /**
+     * @ORM\ManyToMany(targetEntity=Product::class, mappedBy="colors")
+     */
+    private $product;
+
     public function __construct()
     {
         $this->stock = new ArrayCollection();
+        $this->product = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -77,6 +88,42 @@ class Color
                 $stock->setColor(null);
             }
         }
+
+        return $this;
+    }
+
+    public function getColorCode(): ?string
+    {
+        return $this->colorCode;
+    }
+
+    public function setColorCode(?string $colorCode): self
+    {
+        $this->colorCode = $colorCode;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection|Product[]
+     */
+    public function getProduct(): Collection
+    {
+        return $this->product;
+    }
+
+    public function addProduct(Product $product): self
+    {
+        if (!$this->product->contains($product)) {
+            $this->product[] = $product;
+        }
+
+        return $this;
+    }
+
+    public function removeProduct(Product $product): self
+    {
+        $this->product->removeElement($product);
 
         return $this;
     }

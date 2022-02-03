@@ -1,0 +1,41 @@
+{% extends "panelAdmin.html.twig" %}
+
+
+{% block body %}
+
+    {{form( form ) }}
+
+
+    <table class="table table-dark">
+        <thead>
+        <tr>
+            <th scope="col">#</th>
+            <th scope="col">taille</th>
+            <th scope="col">Action</th>
+
+        </tr>
+        </thead>
+        <tbody>
+
+        {% for size in sizes %}
+
+
+            <tr>
+                <th scope="row">{{size.id}}</th>
+                <td>{{size.title}}</td>
+                <td>
+                    <a href="{{ path('editSize',{ id:size.id }) }}"><img src="{{ asset('update.png') }}" alt="Modifier"></a>
+                    <a href="{{ path('deleteSize',{ id:size.id }) }}" onclick="return confirm('Etes-vous sûr de vouloir supprimer cet article ?') "><img src="{{ asset('delete.png') }}" alt="Supprimer"></a>
+                </td>
+
+            </tr>
+        {% endfor %}
+
+        </tbody>
+    </table>
+
+{% endblock %}
+
+
+
+

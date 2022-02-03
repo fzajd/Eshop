@@ -3,22 +3,31 @@
 namespace App\Controller;
 
 use App\Entity\Category;
+use App\Entity\Color;
 use App\Entity\Delivery;
 use App\Entity\Detail;
 use App\Entity\Order;
 use App\Entity\Product;
 use App\Entity\Promo;
+use App\Entity\Size;
 use App\Entity\SubCategory;
+use App\Entity\Suppliers;
 use App\Form\CategoryType;
+use App\Form\ColorType;
 use App\Form\ProductType;
+use App\Form\SizeType;
 use App\Form\SubCategoryType;
+use App\Form\SuppliersType;
 use App\Repository\CategoryRepository;
+use App\Repository\ColorRepository;
 use App\Repository\DeliveryRepository;
 use App\Repository\OrderRepository;
 use App\Repository\ProductRepository;
 use App\Repository\PromoRepository;
+use App\Repository\SizeRepository;
 use App\Repository\StockRepository;
 use App\Repository\SubCategoryRepository;
+use App\Repository\SuppliersRepository;
 use App\Service\Panier\PanierService;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -335,15 +344,17 @@ class AdminController extends AbstractController
         $delivery->setPredictedDate(new \DateTime('now +3day'));
         $order->setDelivery($delivery);
 
-
         $panier = $panierService->fullCart();
 
         foreach ($panier as $item => $value):
+          // dd($value['product']);
             $achat = new Detail();
             $achat->setProduct($value['product']);
             $achat->setQuantity($value['quantity']);
             $achat->setOrders($order);
-            $manager->persist($achat);
+           //$manager->clear($achat);
+           $manager->merge($achat);
+
         endforeach;
         $manager->persist($order);
         $manager->persist($delivery);
@@ -623,10 +634,18 @@ class AdminController extends AbstractController
     *@Route("/addStock/{id}", name="addStock")
     *
     */
-    public function addStock(){
+    public function addStock(Request $request, SizeRepository $sizeRepository, ColorRepository $colorRepository, ProductRepository $productRepository, $id){
+        $product=$productRepository->find($id);
+
+        if (!empty($_POST)):
+
+
+
+            endif;
 
 
        return $this->render('admin/addStock.html.twig', [
+           'product'=>$product
        ]);
     }
 
@@ -657,6 +676,182 @@ class AdminController extends AbstractController
            'products'=>$products
        ]);
     }
+
+    /**
+     * @Route("/listSuppliers", name="listSuppliers")
+     * @Route("/editSuppliers/{id}", name="editSuppliers")
+     */
+    public function addSuppliers(Request $request, EntityManagerInterface $manager, SuppliersRepository $repository, $id = null)
+    {
+
+        $suppliers = $repository->findAll();
+
+        if (!empty($id)) {
+            $supplier = $repository->find($id);
+        } else {
+            $supplier = new Suppliers();
+        }
+
+        $form = $this->createForm(SuppliersType::class, $supplier);
+        $form->handleRequest($request);
+
+        if ($form->isSubmitted() && $form->isValid()) {
+            $manager->persist($supplier);
+            $manager->flush();
+
+            if (!empty($id)) {
+                $this->addFlash('success', 'Fournisseur modifié');
+            } else {
+                $this->addFlash('success', 'Fournisseur ajouté');
+            }
+
+            return $this->redirectToRoute('listSuppliers');
+
+        }
+
+        return $this->render('admin/listSuppliers.html.twig', [
+            'form' => $form->createView(),
+            'suppliers' => $suppliers,
+            'titre' => 'Gestion des fournisseurs'
+        ]);
+    }
+
+    /**
+     * @Route("/deleteSuppliers/{id}", name="deleteSuppliers")
+     *
+     */
+    public function deleteSuppliers(Suppliers $suppliers, SuppliersRepository $repository, EntityManagerInterface $manager, $id)
+
+    {
+        $suppliers = $repository->find($id);
+
+        $manager->remove($suppliers);
+        $manager->flush();
+
+        $this->addFlash('success', 'Le fournisseur a bien été supprimé');
+
+        return $this->redirectToRoute('listSuppliers');
+    }
+
+
+    /**
+     * @Route("/listSize", name="listSize")
+     * @Route("/editSize/{id}", name="editSize")
+     */
+    public function listSize(SizeRepository $repository, EntityManagerInterface $manager, Request $request, $id = null)
+    {
+
+        $sizes = $repository->findAll();
+
+        if (!empty($id)) {
+            $size = $repository->find($id);
+        } else {
+            $size = new Size();
+        }
+
+
+
+
+        $form = $this->createForm(SizeType::class, $size);
+        $form->handleRequest($request);
+
+        if ($form->isSubmitted() && $form->isValid()) {
+
+            $manager->persist($size);
+            $manager->flush();
+
+            if (!empty($id)) {
+                $this->addFlash('success', 'Taille modifiée');
+            } else {
+                $this->addFlash('success', 'Taille ajoutée');
+            }
+
+
+            return $this->redirectToRoute('listSize');
+        }
+
+
+        return $this->render('admin/listSize.html.twig', [
+            'form' => $form->createView(),
+            'sizes' => $sizes,
+            'titre' => 'Gestion des tailles'
+        ]);
+    }
+
+    /**
+     * @Route("/deleteSize/{id}", name="deleteSize")
+     */
+    public function deleteSize(Size $size, EntityManagerInterface $manager)
+    {
+        $manager->remove($size);
+        $manager->flush();
+        $this->addFlash('success', 'Taille supprimée');
+
+
+        return $this->redirectToRoute('listSize');
+    }
+
+    /**
+     * @Route("/color", name="color")
+     * @Route("/editColor/{id}",name="editColor")
+     */
+    public function color(Request $request, EntityManagerInterface $manager, ColorRepository $repository, $id=null)
+
+    {
+        $colors= $repository->findAll();
+
+        if(!empty($id)):
+            $color = $repository->find($id);
+        else:
+            $color = new Color();
+        endif;
+
+        $form=$this->createForm( ColorType::class, $color);
+
+        $form->handleRequest($request);
+
+        if($form->isSubmitted() && $form->isValid()):
+
+            //dd($color);
+
+            $manager->persist($color);
+            $manager->flush();
+
+            if(!empty($id)):
+                $this->addFlash('success', 'couleur modifiée');
+            else:
+                $this->addFlash('success', 'couleur ajoutée');
+            endif;
+
+            return $this->redirectToRoute('color');
+
+        endif;
+
+        //dd($form);
+        return $this->render('admin/color.html.twig',[
+            'form'=>$form->createView(),
+            'colors'=>$colors,
+            'title'=>'Gestion des couleurs'
+
+        ]);
+    }
+
+    /**
+     * @Route("/deleteColor/{id}" ,name="deleteColor")
+     */
+    public function deleteColor (Color $color, EntityManagerInterface $manager)
+    {
+        $manager->remove($color);
+        $manager->flush();
+        $this->addFlash(
+            'success',
+            'couleur supprimée'
+        );
+
+        return $this->redirectToRoute('color');
+    }
+
+
 
 
 }

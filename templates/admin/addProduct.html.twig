@@ -12,43 +12,52 @@
 
 
 {% block body %}
+    <link rel="stylesheet" href="{{ asset('css/select2.css') }}">
 
-<div class="pb-5">
-    {{ form_start(form) }}
+    <div class="pb-5">
+        {{ form_start(form) }}
 
-    <label for="">Titre</label>
-    {{ form_row(form.title) }}
+        <label for="">Titre</label>
+        {{ form_row(form.title) }}
 
-    <label for="">Prix</label>
-    {{ form_row(form.price) }}
+        <label for="">Prix</label>
+        {{ form_row(form.price) }}
 
-    <label for="">Référence</label>
-    {{ form_row(form.reference) }}
+        <label for="">Référence</label>
+        {{ form_row(form.reference) }}
 
-    <label for="">Description</label>
-    {{ form_row(form.description, { 'attr':{'placeholder':'veuillez saisir le texte'}}) }}
+        <label for="">Description</label>
+        {{ form_row(form.description, { 'attr':{'placeholder':'veuillez saisir le texte'}}) }}
 
 
+        <label for="">Marque</label>
+        {{ form_row(form.brand) }}
 
-    <label for="">Marque</label>
-    {{ form_row(form.brand) }}
+        <label for="">Catégorie</label>
+        {{ form_row(form.category) }}
 
-    <label for="">Catégorie</label>
-    {{ form_row(form.category) }}
+        <label for="">Section</label>
+        {{ form_widget(form.gender) }}
 
-    <label for="">Section</label>
-    {{ form_widget(form.gender) }}
+        <label for="">Fournisseur</label>
+        {{ form_widget(form.suppliers) }}
 
-    <label for="">Photo</label>
-    {{ form_row(form.picture, { 'attr': { 'onChange': "loadFile(event)"}  }) }}
-    <div class="text-center">
-        <img id="image" width="300">
-    </div>
+        <label for="">Couleurs</label>
+        {{ form_widget(form.colors) }}
 
-    <div class="mt-3">
-    {{ form_row(form.Enregistrer) }}
-    </div>
-    {{ form_end(form) }}
+        <label for="">Tailles</label>
+        {{ form_widget(form.sizes) }}
+
+        <label for="">Photo</label>
+        {{ form_row(form.picture, { 'attr': { 'onChange': "loadFile(event)"}  }) }}
+        <div class="text-center">
+            <img id="image" width="300">
+        </div>
+
+        <div class="mt-3">
+            {{ form_row(form.Enregistrer) }}
+        </div>
+        {{ form_end(form) }}
 
     </div>
 
@@ -57,11 +66,20 @@
 
 
     <script>
-        var loadFile = function(event){
+        var loadFile = function (event) {
             var image = document.getElementById('image');
 
             image.src = URL.createObjectURL(event.target.files[0]);
         };
+    </script>
+
+    <script src="{{ asset('js/jquery.min.js') }}"></script>
+    <script src="{{ asset('js/select2.js') }}"></script>
+    <script>
+        $(function () {
+            $('.select2').select2()
+
+        })
     </script>
 
 

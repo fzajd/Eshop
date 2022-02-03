@@ -29,9 +29,15 @@ class Size
      */
     private $stock;
 
+    /**
+     * @ORM\ManyToMany(targetEntity=Product::class, mappedBy="sizes")
+     */
+    private $product;
+
     public function __construct()
     {
         $this->stock = new ArrayCollection();
+        $this->product = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -77,6 +83,30 @@ class Size
                 $stock->setSize(null);
             }
         }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection|Product[]
+     */
+    public function getProduct(): Collection
+    {
+        return $this->product;
+    }
+
+    public function addProduct(Product $product): self
+    {
+        if (!$this->product->contains($product)) {
+            $this->product[] = $product;
+        }
+
+        return $this;
+    }
+
+    public function removeProduct(Product $product): self
+    {
+        $this->product->removeElement($product);
 
         return $this;
     }

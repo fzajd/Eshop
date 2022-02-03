@@ -97,7 +97,7 @@
                     <div class="btn-group" role="group">
                         <button id="btnGroupDrop1" type="button" class="btn btn-primary dropdown-toggle" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false"></button>
                         <div class="dropdown-menu" aria-labelledby="btnGroupDrop1" style="">
-                            <a class="dropdown-item" href="">Liste des fournisseurs</a>
+                            <a class="dropdown-item" href="{{ path('listSuppliers') }}">Liste des fournisseurs</a>
 
                         </div>
                     </div>
@@ -109,8 +109,8 @@
                     <div class="btn-group" role="group">
                         <button id="btnGroupDrop1" type="button" class="btn btn-primary dropdown-toggle" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false"></button>
                         <div class="dropdown-menu" aria-labelledby="btnGroupDrop1" style="">
-                            <a class="dropdown-item" href="{{ path('listPromo') }}">Liste des couleur</a>
-                            <a class="dropdown-item" href="{{ path('listPromo') }}">Liste des tailles</a>
+                            <a class="dropdown-item" href="{{ path('color') }}">Liste des couleur</a>
+                            <a class="dropdown-item" href="{{ path('listSize') }}">Liste des tailles</a>
                         </div>
                     </div>
                 </div>

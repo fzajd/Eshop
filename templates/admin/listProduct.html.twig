@@ -15,6 +15,9 @@
             <th scope="col">Sous-Catégorie</th>
             <th scope="col">Catégorie</th>
             <th scope="col">Section</th>
+            <th scope="col">Tailles</th>
+            <th scope="col">Couleurs</th>
+            <th scope="col">Fournisseur</th>
             <th scope="col">Actions</th>
         </tr>
         </thead>
@@ -23,29 +26,54 @@
         {% for product  in  products %}
 
 
-        <tr>
-            <th scope="row">{{ product.id }}</th>
-            <td>{{ product.title }}</td>
-            <td>{{ product.reference }}</td>
-            <td>{{ product.price | format_currency('EUR') }}</td>
-            <td>{{ product.description | slice(0,15) ~ '...' }}</td>
-<td>
-    <img src="{{ asset('upload/') }}{{ product.picture }}" width="50" alt="{{ product.title }}">
-</td>
-<td>{{ product.brand }}</td>
-<td>{{ product.category.title }}</td>
-<td>{{ product.category.subCategory.title }}</td>
-<td>{{ product.gender }}</td>
-<td>
-    <a href="{{ path('editProduct', { id:product.id  }) }}"><img src="{{ asset('update.png') }}" alt="modifier"></a>
-    <a href="{{ path('deleteProduct', {'id': product.id}) }}" onclick="return confirm('Etes-vous de vouloir supprimer cet article')"  ><img src="{{ asset('delete.png') }}" alt="supprimer"></a>
-</td>
-</tr>
+            <tr>
+                <th scope="row">{{ product.id }}</th>
+                <td>{{ product.title }}</td>
+                <td>{{ product.reference }}</td>
+                <td>{{ product.price | format_currency('EUR') }}</td>
+                <td>{{ product.description | slice(0,15) ~ '...' }}</td>
+                <td>
+                    <img src="{{ asset('upload/') }}{{ product.picture }}" width="50" alt="{{ product.title }}">
+                </td>
+                <td>{{ product.brand }}</td>
+                <td>{{ product.category.title }}</td>
+                <td>{{ product.category.subCategory.title }}</td>
+                <td>{{ product.gender }}</td>
+                <td>{% if product.sizes is not empty %}
+                        <ul>
+                            {% for size in product.sizes %}
+                                <li>{{ size.title }}</li>
+                            {% endfor %}
+                        </ul>
+                    {% endif %}
+                </td>
+                <td  >{% if product.colors is not empty %}
 
-{% endfor %}
+                        <div class="row justify-content-center">
+                            {% for color in product.colors %}
+                                <div class="m-1 col-md-6" style="background-color:{{ color.colorCode }};border: 2px solid grey;width: 30px; min-height: 30px" ></div>
+                            {% endfor %}
+                        </div>
 
-</tbody>
-</table>
+                    {% endif %}
+                </td>
+                <td>
+                    {% if product.suppliers is not empty %}
+                        {{ product.suppliers.title }}
+                    {% endif %}</td>
+                <td>
+                    <a href="{{ path('editProduct', { id:product.id  }) }}"><img src="{{ asset('update.png') }}"
+                                                                                 alt="modifier"></a>
+                    <a href="{{ path('deleteProduct', {'id': product.id}) }}"
+                       onclick="return confirm('Etes-vous de vouloir supprimer cet article')"><img
+                                src="{{ asset('delete.png') }}" alt="supprimer"></a>
+                </td>
+            </tr>
+
+        {% endfor %}
+
+        </tbody>
+    </table>
 
 
 

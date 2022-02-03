@@ -96,10 +96,22 @@ class Product
      */
     private $stocks;
 
+    /**
+     * @ORM\ManyToMany(targetEntity=Color::class, inversedBy="product")
+     */
+    private $colors;
+
+    /**
+     * @ORM\ManyToMany(targetEntity=Size::class, inversedBy="product")
+     */
+    private $sizes;
+
     public function __construct()
     {
         $this->details = new ArrayCollection();
         $this->stocks = new ArrayCollection();
+        $this->colors = new ArrayCollection();
+        $this->sizes = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -282,6 +294,60 @@ class Product
             if ($stock->getProduct() === $this) {
                 $stock->setProduct(null);
             }
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection|Color[]
+     */
+    public function getColors(): Collection
+    {
+        return $this->colors;
+    }
+
+    public function addColor(Color $color): self
+    {
+        if (!$this->colors->contains($color)) {
+            $this->colors[] = $color;
+            $color->addProduct($this);
+        }
+
+        return $this;
+    }
+
+    public function removeColor(Color $color): self
+    {
+        if ($this->colors->removeElement($color)) {
+            $color->removeProduct($this);
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection|Size[]
+     */
+    public function getSizes(): Collection
+    {
+        return $this->sizes;
+    }
+
+    public function addSize(Size $size): self
+    {
+        if (!$this->sizes->contains($size)) {
+            $this->sizes[] = $size;
+            $size->addProduct($this);
+        }
+
+        return $this;
+    }
+
+    public function removeSize(Size $size): self
+    {
+        if ($this->sizes->removeElement($size)) {
+            $size->removeProduct($this);
         }
 
         return $this;

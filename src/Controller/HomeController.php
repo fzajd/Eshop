@@ -367,5 +367,63 @@ class HomeController extends AbstractController
         return $this->redirectToRoute('cart');
     }
 
+    /**
+    *@Route("/detailProduct/{id}/{size}/{color}",defaults={"size"=null, "color"=null}, name="detailProduct")
+    *@Route("/detailProducta/{id}/{color}/{size}",defaults={"size"=null, "color"=null}, name="detailProducta")
+    */
+    public function detailProduct(Product $product, $color=null, $size=null){
+
+
+       return $this->render('home/detailProduct.html.twig', [
+           'product'=>$product, 'color'=>$color, 'size'=>$size
+       ]);
+    }
+
+    /**
+    *@Route("/addTempColor/{id}/{color}/{size}", defaults={"size"=null} ,name="addTempColor")
+    *
+    */
+    public function addTempColor(PanierService $panierService, $id, $color){
+
+        $panierService->addColor($id, $color);
+
+
+
+       return $this->redirectToRoute('detailProducta', [
+           'id'=>$id, 'color'=>$color, 'size'=>null
+       ]);
+    }
+
+
+    /**
+     *@Route("/addTempSize/{id}/{size}/{color}",defaults={"color"=null}, name="addTempSize")
+     *
+     */
+    public function addTempSize(PanierService $panierService, $id, $size){
+
+        $panierService->addSize($id, $size);
+
+
+        return $this->redirectToRoute('detailProduct', [
+            'id'=>$id, 'size'=>$size, 'color'=>null
+        ]);
+    }
+
+    /**
+    *@Route("/addTempToCart/{id}", name="addTempToCart")
+    *
+    */
+    public function addTempToCart(PanierService $panierService, $id){
+
+        $retour =$panierService->addTempCart();
+        //dd($retour);
+        if ($retour):
+            $this->addFlash('danger', $retour);
+            endif;
+        return $this->redirectToRoute('detailProduct', [
+            'id'=>$id, 'size'=>null, 'color'=>null
+        ]);
+    }
+
 
 }
