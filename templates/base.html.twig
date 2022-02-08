@@ -54,7 +54,10 @@
                         {% if app.user and is_granted('ROLE_ADMIN') %}
                         <a class="dropdown-item" href="{{ path('listProduct') }}">Accès Back-office</a>
                         {% endif %}
-                        <a class="dropdown-item" href="#">Another action</a>
+                        {% if app.user %}
+
+                        <a class="dropdown-item" href="{{ path('profil') }}">Profil</a>
+                        {% endif %}
                         <a class="dropdown-item" href="#">Something else here</a>
                         {% if app.user %}
                         <div class="dropdown-divider"></div>

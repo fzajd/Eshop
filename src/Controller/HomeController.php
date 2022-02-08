@@ -3,15 +3,20 @@
 namespace App\Controller;
 
 use App\Entity\Category;
+use App\Entity\Delivery;
+use App\Entity\Detail;
+use App\Entity\Order;
 use App\Entity\Product;
 use App\Form\CategoryType;
 use App\Form\ProductType;
 use App\Repository\CategoryRepository;
 use App\Repository\ProductRepository;
 use App\Repository\PromoRepository;
+use App\Repository\StockRepository;
 use App\Repository\SubCategoryRepository;
 use App\Service\Panier\PanierService;
 use Doctrine\ORM\EntityManagerInterface;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
 use Symfony\Bridge\Twig\Mime\TemplatedEmail;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\File\Exception\FileException;
@@ -424,6 +429,63 @@ class HomeController extends AbstractController
             'id'=>$id, 'size'=>null, 'color'=>null
         ]);
     }
+
+    /**
+     * @Route("/order", name="order")
+     * @IsGranted("IS_AUTHENTICATED_FULLY")
+     */
+    public function order(EntityManagerInterface $manager, PanierService $panierService, StockRepository $stockRepository)
+    {
+        $panier = $panierService->fullCart();
+
+        foreach ($panier as $item => $value):
+            $stock=$stockRepository->findOneBy(['product'=>$value['product'],'size'=>$value['size'], 'color'=>$value['color']]);
+            //dd($stock);
+            if ($stock->getQuantity() < $value['quantity']):
+                $this->addFlash('danger', 'la commande est interrompu,le stock est insuffisant pour '.$value['product']->getTitle().' '.$value['color']->getTitle().' taille '.$value['size']->getTitle().'. Stock restant: '.$stock->getQuantity());
+                return $this->redirectToRoute('cart');
+            endif;
+        endforeach;
+        $order = new Order();
+        $order->setUser($this->getUser());
+        $order->setDate(new \DateTime());
+
+
+        $delivery = new Delivery();
+
+        $delivery->setStatus(0);
+        $delivery->setPredictedDate(new \DateTime('now +3day'));
+        $order->setDelivery($delivery);
+
+
+
+        foreach ($panier as $item => $value):
+            $stock=$stockRepository->findOneBy(['product'=>$value['product'],'size'=>$value['size'], 'color'=>$value['color']]);
+
+            $stock->setQuantity($stock->getQuantity() - $value['quantity']);
+            $manager->persist($stock);
+            // dd($value['product']);
+            $achat = new Detail();
+            $achat->setProduct($value['product']);
+            $achat->setQuantity($value['quantity']);
+            $achat->setOrders($order);
+            //$manager->clear($achat);
+            $manager->merge($achat);
+
+
+
+        endforeach;
+        $manager->persist($order);
+        $manager->persist($delivery);
+        $manager->flush();
+        $panierService->destroy();
+        $this->addFlash('success', 'Merci pour votre achat, suivez votre commande dans votre espace membre');
+
+        return $this->redirectToRoute('home', [
+        ]);
+
+    }
+
 
 
 }

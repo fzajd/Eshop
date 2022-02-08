@@ -19,6 +19,22 @@ class StockRepository extends ServiceEntityRepository
         parent::__construct($registry, Stock::class);
     }
 
+
+    public function findBySearch($search)
+    {
+        return $this->createQueryBuilder('p')
+            ->innerJoin('p.product', 'a')
+            ->andWhere('a.reference LIKE :val')
+            ->setParameter('val', '%'.$search.'%')
+            ->orWhere('a.title LIKE :gender')
+            ->setParameter('gender','%'.$search.'%')
+            ->getQuery()
+            ->getResult()
+            ;
+    }
+
+
+
     // /**
     //  * @return Stock[] Returns an array of Stock objects
     //  */

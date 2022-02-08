@@ -10,6 +10,7 @@ use App\Entity\Order;
 use App\Entity\Product;
 use App\Entity\Promo;
 use App\Entity\Size;
+use App\Entity\Stock;
 use App\Entity\SubCategory;
 use App\Entity\Suppliers;
 use App\Form\CategoryType;
@@ -30,12 +31,18 @@ use App\Repository\SubCategoryRepository;
 use App\Repository\SuppliersRepository;
 use App\Service\Panier\PanierService;
 use Doctrine\ORM\EntityManagerInterface;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\File\Exception\FileException;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 
+
+/**
+ * @IsGranted("ROLE_ADMIN")
+ *
+ */
 class AdminController extends AbstractController
 {
 
@@ -92,10 +99,17 @@ class AdminController extends AbstractController
                 // on execute la ou les requêtes
                 $manager->flush();
 
-                $this->addFlash('success', 'Le produit a bien été enregistré');
+                $this->addFlash('success', 'Le produit a bien été enregistré renseignez à présent les stocks');
+                foreach ($product->getColors() as $color):
+                    foreach ($product->getSizes() as $size):
+                        $stock = new Stock();
+                        $stock->setProduct($product)->setSize($size)->setColor($color);
+                        $manager->persist($stock);
 
-
-                return $this->redirectToRoute('home');
+                    endforeach;
+                endforeach;
+                $manager->flush();
+                return $this->redirectToRoute('listStock');
 
 
             endif;
@@ -129,7 +143,7 @@ class AdminController extends AbstractController
      * @Route("/editProduct/{id}", name="editProduct")
      *
      */
-    public function editProduct(Request $request, EntityManagerInterface $manager, Product $product)
+    public function editProduct(Request $request, EntityManagerInterface $manager, Product $product, StockRepository $stockRepository)
     {
 
         // la différence entre l'ajout et la modification:
@@ -170,6 +184,18 @@ class AdminController extends AbstractController
 
             $manager->persist($product);
 
+            foreach ($product->getColors() as $color):
+                foreach ($product->getSizes() as $size):
+                    $find=$stockRepository->findOneBy(['product'=>$product,'size'=>$size,'color'=>$color]);
+                if (!$find):
+                    $stock = new Stock();
+                    $stock->setProduct($product)->setSize($size)->setColor($color);
+                    $manager->persist($stock);
+                endif;
+                endforeach;
+            endforeach;
+
+
 
             $manager->flush();
 
@@ -197,7 +223,7 @@ class AdminController extends AbstractController
     public function deleteProduct(EntityManagerInterface $manager, Product $product)
     {
 
-        unlink($this->getParameter('upload_directory') . '/' . $product->getPicture());
+        //unlink($this->getParameter('upload_directory') . '/' . $product->getPicture());
         $manager->remove($product);
         $manager->flush();
 
@@ -326,46 +352,7 @@ class AdminController extends AbstractController
         return $this->redirectToRoute('subCategory');
     }
 
-    /**
-     * @Route("/order", name="order")
-     *
-     */
-    public function order(EntityManagerInterface $manager, PanierService $panierService)
-    {
 
-        $order = new Order();
-        $order->setUser($this->getUser());
-        $order->setDate(new \DateTime());
-
-
-        $delivery = new Delivery();
-
-        $delivery->setStatus(0);
-        $delivery->setPredictedDate(new \DateTime('now +3day'));
-        $order->setDelivery($delivery);
-
-        $panier = $panierService->fullCart();
-
-        foreach ($panier as $item => $value):
-          // dd($value['product']);
-            $achat = new Detail();
-            $achat->setProduct($value['product']);
-            $achat->setQuantity($value['quantity']);
-            $achat->setOrders($order);
-           //$manager->clear($achat);
-           $manager->merge($achat);
-
-        endforeach;
-        $manager->persist($order);
-        $manager->persist($delivery);
-        $manager->flush();
-        $panierService->destroy();
-        $this->addFlash('success', 'Merci pour votre achat, suivez votre commande dans votre espace membre');
-
-        return $this->redirectToRoute('home', [
-        ]);
-
-    }
 
     /**
      * @Route("/listOrder", name="listOrder")
@@ -592,7 +579,7 @@ class AdminController extends AbstractController
      * @Route("/deletePromo/{id}", name="deletePromo")
      *
      */
-    public function deletePromo(PromoRepository $promoRepository,ProductRepository $productRepository, EntityManagerInterface $manager, $id)
+    public function deletePromo(PromoRepository $promoRepository, ProductRepository $productRepository, EntityManagerInterface $manager, $id)
     {
 
         $promo = $promoRepository->find($id);
@@ -600,11 +587,11 @@ class AdminController extends AbstractController
 
         if ($promo->getSection() !== null):
 
-            $products=$productRepository->findBy(['gender'=>$promo->getSection()]);
+            $products = $productRepository->findBy(['gender' => $promo->getSection()]);
 
-        foreach ($products as $product):
-            $product->setPromo(null);
-            $manager->persist($product);
+            foreach ($products as $product):
+                $product->setPromo(null);
+                $manager->persist($product);
             endforeach;
         endif;
 
@@ -616,65 +603,66 @@ class AdminController extends AbstractController
         return $this->redirectToRoute('listPromo');
     }
 
-    /**
-    *@Route("/stock", name="stock")
-    *
-    */
-    public function stock(ProductRepository $productRepository){
 
-        $products=$productRepository->findAll();
-
-
-       return $this->render('admin/stock.html.twig', [
-           'products'=>$products
-       ]);
-    }
 
     /**
-    *@Route("/addStock/{id}", name="addStock")
-    *
-    */
-    public function addStock(Request $request, SizeRepository $sizeRepository, ColorRepository $colorRepository, ProductRepository $productRepository, $id){
-        $product=$productRepository->find($id);
+     * @Route("/stock/{id}", name="stock")
+     *
+     */
+    public function stock(Request $request,Stock $stock,EntityManagerInterface $manager, $id)
+    {
+
 
         if (!empty($_POST)):
 
+            $value = $request->request->get('value');
 
 
-            endif;
+
+            $stock->setQuantity($value);
+
+            $manager->persist($stock);
+            $manager->flush();
+            $this->addFlash('success', 'stock déclaré');
+            return $this->redirectToRoute('listStock');
 
 
-       return $this->render('admin/addStock.html.twig', [
-           'product'=>$product
-       ]);
+        endif;
+
+
+        return $this->render('admin/stock.html.twig', [
+            'stock'=>$stock
+        ]);
     }
 
     /**
-    *@Route("/listStock", name="listStock")
-    *
-    */
-    public function listStock(StockRepository $stockRepository){
+     * @Route("/listStock", name="listStock")
+     *
+     */
+    public function listStock(StockRepository $stockRepository)
+    {
 
-        $stocks=$stockRepository->findBy([], ['product'=>'ASC']);
+        $stocks = $stockRepository->findBy([], ['product' => 'ASC']);
 
-       return $this->render('admin/listStock.html.twig', [
-           'stocks'=>$stocks
-       ]);
+        return $this->render('admin/listStock.html.twig', [
+            'stocks' => $stocks
+        ]);
     }
 
     /**
-    *@Route("/searchRef", name="searchRef")
-    *
-    */
-    public function searchRef(Request $request, ProductRepository $productRepository){
+     * @Route("/searchRef", name="searchRef")
+     *
+     */
+    public function searchRef(Request $request, StockRepository $stockRepository)
+    {
 
-        $search=$request->request->get('search');
-        $products=$productRepository->findBySearch($search);
+        $search = $request->request->get('search');
+        $stocks = $stockRepository->findBySearch($search);
 
 
-       return $this->render('admin/stock.html.twig', [
-           'products'=>$products
-       ]);
+        return $this->render('admin/listStock.html.twig', [
+            'stocks' => $stocks
+        ]);
     }
 
     /**
@@ -750,8 +738,6 @@ class AdminController extends AbstractController
         }
 
 
-
-
         $form = $this->createForm(SizeType::class, $size);
         $form->handleRequest($request);
 
@@ -795,29 +781,29 @@ class AdminController extends AbstractController
      * @Route("/color", name="color")
      * @Route("/editColor/{id}",name="editColor")
      */
-    public function color(Request $request, EntityManagerInterface $manager, ColorRepository $repository, $id=null)
+    public function color(Request $request, EntityManagerInterface $manager, ColorRepository $repository, $id = null)
 
     {
-        $colors= $repository->findAll();
+        $colors = $repository->findAll();
 
-        if(!empty($id)):
+        if (!empty($id)):
             $color = $repository->find($id);
         else:
             $color = new Color();
         endif;
 
-        $form=$this->createForm( ColorType::class, $color);
+        $form = $this->createForm(ColorType::class, $color);
 
         $form->handleRequest($request);
 
-        if($form->isSubmitted() && $form->isValid()):
+        if ($form->isSubmitted() && $form->isValid()):
 
             //dd($color);
 
             $manager->persist($color);
             $manager->flush();
 
-            if(!empty($id)):
+            if (!empty($id)):
                 $this->addFlash('success', 'couleur modifiée');
             else:
                 $this->addFlash('success', 'couleur ajoutée');
@@ -828,10 +814,10 @@ class AdminController extends AbstractController
         endif;
 
         //dd($form);
-        return $this->render('admin/color.html.twig',[
-            'form'=>$form->createView(),
-            'colors'=>$colors,
-            'title'=>'Gestion des couleurs'
+        return $this->render('admin/color.html.twig', [
+            'form' => $form->createView(),
+            'colors' => $colors,
+            'title' => 'Gestion des couleurs'
 
         ]);
     }
@@ -839,7 +825,7 @@ class AdminController extends AbstractController
     /**
      * @Route("/deleteColor/{id}" ,name="deleteColor")
      */
-    public function deleteColor (Color $color, EntityManagerInterface $manager)
+    public function deleteColor(Color $color, EntityManagerInterface $manager)
     {
         $manager->remove($color);
         $manager->flush();
@@ -850,8 +836,6 @@ class AdminController extends AbstractController
 
         return $this->redirectToRoute('color');
     }
-
-
 
 
 }

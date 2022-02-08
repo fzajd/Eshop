@@ -1,0 +1,24 @@
+{% extends 'base.html.twig' %}
+
+{% block body %}
+
+    <p>Prénom: {{ app.user.firstName }}</p>
+    <p>Nom: {{ app.user.lastName }}</p>
+    <p>Email: {{ app.user.email }}</p>
+    <p>Numéro de voie: {{ app.user.streetNumber }}</p>
+    <p>Voie: {{ app.user.street }}</p>
+    <p>Code postal: {{ app.user.zipCode }}</p>
+    <p>Ville: {{ app.user.city }}</p>
+    <p>Téléphone: {{ app.user.phone }}</p>
+
+    <a href="{{ path('modifProfil') }}" class="btn btn-success">Modifier infos</a>
+    <a href="{{ path('modifPassword') }}" class="btn btn-success">Modifier mot de passe</a>
+
+
+
+{% endblock %}
+
+{% block title %}
+
+{% endblock %}
+

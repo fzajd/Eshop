@@ -92,7 +92,7 @@ class Product
     private $suppliers;
 
     /**
-     * @ORM\OneToMany(targetEntity=Stock::class, mappedBy="product")
+     * @ORM\OneToMany(targetEntity=Stock::class, mappedBy="product",orphanRemoval=true, cascade={"persist"})
      */
     private $stocks;
 
@@ -321,6 +321,7 @@ class Product
     {
         if ($this->colors->removeElement($color)) {
             $color->removeProduct($this);
+
         }
 
         return $this;

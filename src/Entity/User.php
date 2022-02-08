@@ -48,11 +48,14 @@ class User implements PasswordAuthenticatedUserInterface, UserInterface
 
     /**
      * @ORM\Column(type="string", length=255)
-     * @Assert\NotBlank(message="Veuillez saisir ce champs")
-     * @Assert\EqualTo(propertyPath="confirmPassword", message="Les mots de passe ne sont pas identiques")
+     *
+     *
      */
     private $password;
 
+    /**
+     *  @Assert\EqualTo(propertyPath="confirmPassword", message="Les mots de passe ne sont pas identiques")
+     */
     public $confirmPassword;
 
     /**

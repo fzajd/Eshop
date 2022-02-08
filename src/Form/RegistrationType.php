@@ -16,6 +16,7 @@ class RegistrationType extends AbstractType
 {
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
+        if ($options['add']==true):
         $builder
             ->add('firstName', TextType::class,[
                 'required'=>false,
@@ -96,12 +97,84 @@ class RegistrationType extends AbstractType
             ])
             ->add('Enregistrer', SubmitType::class)
         ;
+
+        elseif ($options['edit']):
+            $builder
+                ->add('firstName', TextType::class,[
+                    'required'=>false,
+                    'label'=>false,
+                    'attr'=>[
+                        'placeholder'=>'Saisissez votre prénom'
+                    ]
+                ])
+                ->add('lastName', TextType::class,[
+                    'required'=>false,
+                    'label'=>false,
+                    'attr'=>[
+                        'placeholder'=>'Saisissez votre nom'
+                    ]
+                ])
+                ->add('email', EmailType::class, [
+                    'required'=>false,
+                    'label'=>false,
+                    'attr'=>[
+                        'placeholder'=>'Saisissez votre email'
+                    ]
+                ])
+
+                ->add('streetNumber', NumberType::class,[
+                    'required'=>false,
+                    'label'=>false,
+                    'attr'=>[
+                        'placeholder'=>'Saisissez votre numéro de rue'
+                    ]
+                ] )
+                ->add('street', TextType::class,[
+                    'required'=>false,
+                    'label'=>false,
+                    'attr'=>[
+                        'placeholder'=>'Saisissez votre rue'
+                    ]
+                ])
+                ->add('zipCode', NumberType::class,[
+                    'required'=>false,
+                    'label'=>false,
+                    'attr'=>[
+                        'placeholder'=>'Saisissez votre code postal'
+                    ]
+                ])
+                ->add('city', TextType::class,[
+                    'required'=>false,
+                    'label'=>false,
+                    'attr'=>[
+                        'placeholder'=>'Saisissez votre ville de résidence'
+                    ]
+                ])
+                ->add('phone', NumberType::class,[
+                    'required'=>false,
+                    'label'=>false,
+                    'attr'=>[
+                        'placeholder'=>'Saisissez votre numéro de téléphone'
+                    ]
+                ])
+                ->add('username', TextType::class,[
+                    'required'=>false,
+                    'label'=>false,
+                    'attr'=>[
+                        'placeholder'=>'Saisissez votre pseudo'
+                    ]
+                ])
+                ->add('Enregistrer', SubmitType::class)
+            ;
+        endif;
     }
 
     public function configureOptions(OptionsResolver $resolver): void
     {
         $resolver->setDefaults([
             'data_class' => User::class,
+            'add'=>false,
+            'edit'=>false
         ]);
     }
 }

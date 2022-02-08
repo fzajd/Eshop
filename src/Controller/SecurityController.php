@@ -10,12 +10,85 @@ use Symfony\Bridge\Twig\Mime\TemplatedEmail;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\HttpFoundation\Session\SessionInterface;
 use Symfony\Component\Mailer\MailerInterface;
 use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 use Symfony\Component\Routing\Annotation\Route;
 
 class SecurityController extends AbstractController
 {
+
+    /**
+     * @Route("/profil", name="profil")
+     *
+     */
+    public function profil()
+    {
+
+
+        return $this->render('home/profil.html.twig', [
+        ]);
+    }
+
+    /**
+     * @Route("/modifProfil", name="modifProfil")
+     *
+     */
+    public function modifProfil(Request $request, EntityManagerInterface $manager, SessionInterface $session)
+    {
+
+        $user = $this->getUser();
+
+        $form = $this->createForm(RegistrationType::class, $user, ['edit' => true]);
+
+        $form->handleRequest($request);
+
+        if ($form->isSubmitted() && $form->isValid()):
+
+            $manager->persist($user);
+            $manager->flush();
+            $session->set('user', $user);
+            $this->addFlash('success', 'Félicitation, modification effectuée');
+            return $this->redirectToRoute('profil');
+
+
+        endif;
+
+        return $this->render('home/modifProfil.html.twig', [
+            'form' => $form->createView()
+        ]);
+    }
+
+    /**
+     * @Route("/modifPassword", name="modifPassword")
+     *
+     */
+    public function modifPassword(Request $request, EntityManagerInterface $manager, UserPasswordHasherInterface $hasher, SessionInterface $session)
+    {
+
+
+        if (!empty($_POST)):
+            $mdp = $request->request->get('mdp');
+            $oldMdp = $request->request->get('oldMdp');
+            $confirmMdp = $request->request->get('confirmMdp');
+
+            if ($mdp == $confirmMdp && $hasher->isPasswordValid($this->getUser(), $oldMdp)):
+                $mdp = $hasher->hashPassword($this->getUser(), $mdp);
+                $this->getUser()->setPassword($mdp);
+                $manager->persist($this->getUser());
+                $manager->flush();
+                $session->set('user', $this->getUser());
+                $this->addFlash('success', 'Félicitation, votre mot de passe est modifié');
+                return $this->redirectToRoute('profil');
+            endif;
+
+        endif;
+
+
+        return $this->render('home/modifPassword.html.twig', [
+        ]);
+    }
+
 
     /**
      * @Route("/register", name="register")
@@ -26,7 +99,7 @@ class SecurityController extends AbstractController
 
         $user = new User();
 
-        $form = $this->createForm(RegistrationType::class, $user);
+        $form = $this->createForm(RegistrationType::class, $user, ['add' => true]);
 
         $form->handleRequest($request);
 
@@ -36,6 +109,7 @@ class SecurityController extends AbstractController
             $user->setPassword($mdp);
             $manager->persist($user);
             $manager->flush();
+
             $this->addFlash('success', 'Félicitation, votre inscription s\'est bien déroulée. Connectez vous à présent');
             return $this->redirectToRoute('login');
 
@@ -160,24 +234,23 @@ class SecurityController extends AbstractController
             $confirmPassword = $request->request->get('confirmPassword');
 
             if ($password !== $confirmPassword):
-                    $this->addFlash('danger', 'Les mots de passe ne correspondent pas');
-                    return $this->redirectToRoute('finalReset',[
-                        'id'=>$id
-                    ]);
+                $this->addFlash('danger', 'Les mots de passe ne correspondent pas');
+                return $this->redirectToRoute('finalReset', [
+                    'id' => $id
+                ]);
             else:
 
                 //dd($id);
-                $user=$repository->find($id);
+                $user = $repository->find($id);
 
-            $mdp=$hasher->hashPassword($user, $password);
-            $user->setPassword($mdp);
-            $user->setToken(null);
-            $manager->persist($user);
-            $manager->flush();
+                $mdp = $hasher->hashPassword($user, $password);
+                $user->setPassword($mdp);
+                $user->setToken(null);
+                $manager->persist($user);
+                $manager->flush();
 
-            $this->addFlash('success', 'Mot de passe réinitialisé, connectez vous à présent');
+                $this->addFlash('success', 'Mot de passe réinitialisé, connectez vous à présent');
                 return $this->render('security/login.html.twig');
-
 
 
             endif;
