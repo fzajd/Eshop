@@ -2,16 +2,6 @@
 
 {% block body %}
     <link rel="stylesheet" href="{{ asset('css/style.css') }}">
-    <div class="mb-2" >
-        <a href="{{ path('filterProduct', {param: 'femme' }) }}" type="button"
-           class="btn btn-dark rounded ">Femme</a>
-        <a href="{{ path('filterProduct', {param: 'homme' }) }}" type="button"
-           class="btn btn-dark rounded mx-2">Homme</a>
-        <a href="{{ path('filterProduct', {param: 'enfant'}) }}" type="button"
-           class="btn btn-dark rounded">Enfant</a>
-
-    </div>
-
 
  {# {{ dump(categories, sousCategories, prixmax ) }} #}
     <div id="form">
@@ -60,8 +50,7 @@
                     <h5 class="card-title">{{ product.title }}</h5>
                     <h4 class="card-title">{{ product.price | format_currency('EUR') }} </h4>
                     <p class="card-text">{{ product.description }}</p>
-                    <a href="{{ path('addCart', { id: product.id, param: 'home' }) }}" class="btn btn-primary">Ajouter
-                        au panier</a>
+                    <a href="{{ path('detailProduct', { id : product.id }) }}" class="btn btn-warning">Voir en détail</a>
                 </div>
             </div>
         {% else %}

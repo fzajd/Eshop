@@ -8,15 +8,7 @@
 
 
 {% block body %}
-    <div >
-            <a href="{{ path('filterProduct', {param: 'femme' }) }}" type="button"
-               class="btn btn-dark rounded ">Femme</a>
-            <a href="{{ path('filterProduct', {param: 'homme' }) }}" type="button"
-               class="btn btn-dark rounded mx-2">Homme</a>
-            <a href="{{ path('filterProduct', {param: 'enfant'}) }}" type="button"
-               class="btn btn-dark rounded">Enfant</a>
 
-    </div>
     <div class="row justify-content-between ms-0 mt-3">
 
         {% for product in products %}
