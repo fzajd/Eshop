@@ -4,16 +4,16 @@
     <link rel="stylesheet" href="{{ asset('css/style.css') }}">
     <div class="mb-2" >
         <a href="{{ path('filterProduct', {param: 'femme' }) }}" type="button"
-           class="btn btn-outline-secondary rounded ">Femme</a>
+           class="btn btn-dark rounded ">Femme</a>
         <a href="{{ path('filterProduct', {param: 'homme' }) }}" type="button"
-           class="btn btn-outline-secondary rounded mx-2">Homme</a>
+           class="btn btn-dark rounded mx-2">Homme</a>
         <a href="{{ path('filterProduct', {param: 'enfant'}) }}" type="button"
-           class="btn btn-outline-secondary rounded">Enfant</a>
+           class="btn btn-dark rounded">Enfant</a>
 
     </div>
 
-    <button onclick="loadForm()" id="hide" class="btn btn-primary p-1">+ de filtres</button>
-  {{ dump(categories, sousCategories, prixmax ) }}
+
+ {# {{ dump(categories, sousCategories, prixmax ) }} #}
     <div id="form">
 
         <form action="{{ path('filterValidate') }}" method="post">
@@ -27,7 +27,6 @@
 
                     <label for="exampleSelect1" class="form-label mt-4">Catégories</label>
                     <select class="form-select" name="cat" id="exampleSelect1">
-                        <option value="all">Toutes nos catégories</option>
                         {% for category in categories %}
                             <option {% if products[0] is defined and products[0].Category.id == category.id %} selected {% endif %}
                                     value="{{ category.id }}">{{ category.title }} </option>
@@ -50,17 +49,7 @@
 
                 {% endif %}
             </div>
-            <div class="pt-4">
-                <label for="">Votre budget</label>
-                <div class="range-wrap mt-4 ms-3 ">
-                    <div class="range-value" id="rangeV"></div>
-                    <input id="range" name="prixmax" type="range" min="0" max="1500" value="50" step="50">
-                </div>
-            </div>
 
-            <button type="submit" class="btn btn-primary mt-2">Filtrer</button>
-        </form>
-    </div>
     <div class="row justify-content-between ms-0 mt-3">
 
         {% for product in products %}

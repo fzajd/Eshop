@@ -14,6 +14,7 @@ use Symfony\Component\HttpFoundation\Session\SessionInterface;
 use Symfony\Component\Mailer\MailerInterface;
 use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\Mime\Email;
 
 class SecurityController extends AbstractController
 {
@@ -94,7 +95,7 @@ class SecurityController extends AbstractController
      * @Route("/register", name="register")
      *
      */
-    public function register(Request $request, EntityManagerInterface $manager, UserPasswordHasherInterface $hasher)
+    public function register(Request $request, EntityManagerInterface $manager, UserPasswordHasherInterface $hasher, MailerInterface $mailer)
     {
 
         $user = new User();
@@ -109,6 +110,18 @@ class SecurityController extends AbstractController
             $user->setPassword($mdp);
             $manager->persist($user);
             $manager->flush();
+            $email = (new Email())
+            ->from('florent.zajd@gmail.com')
+            ->to('necro77360@gmail.com')
+            //->cc('cc@example.com')
+            //->bcc('bcc@example.com')
+            //->replyTo('fabien@example.com')
+            //->priority(Email::PRIORITY_HIGH)
+            ->subject('Time for Symfony Mailer!')
+            ->text('Sending emails is fun again!')
+            ->html('<p>See Twig integration for better HTML integration!</p>');
+
+        $mailer->send($email);
 
             $this->addFlash('success', 'Félicitation, votre inscription s\'est bien déroulée. Connectez vous à présent');
             return $this->redirectToRoute('login');
@@ -170,7 +183,7 @@ class SecurityController extends AbstractController
                 $manager->flush();
 
                 $email = (new TemplatedEmail())
-                    ->from('dorancosalle78@gmail.com')
+                    ->from('florent.zajd@gmail.com')
                     ->to($email)
                     ->subject('Demande de Réinitialisation de mot de passe')
                     ->htmlTemplate('home/email_template.html.twig');
@@ -181,7 +194,7 @@ class SecurityController extends AbstractController
                     'nom' => '',
                     'prenom' => '',
                     'subject' => 'Demande de Réinitialisation de mot de passe',
-                    'from' => 'dorancosalle78@gmail.com',
+                    'from' => 'florent.zajd@gmail.com',
                     'cid' => $cid,
                     'liens' => 'http://127.0.0.1:8000/resetPassword/' . $token . '/' . $id,
                     'objectif' => 'Réinitialiser'

@@ -39,10 +39,7 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 
 
-/**
- * @IsGranted("ROLE_ADMIN")
- *
- */
+
 class AdminController extends AbstractController
 {
 
@@ -272,7 +269,7 @@ class AdminController extends AbstractController
         return $this->render('admin/category.html.twig', [
             'form' => $form->createView(),
             'categories' => $categories,
-            'titre' => 'Gestion des sous-catégories'
+            'titre' => 'Gestion des Catégories'
 
 
         ]);
@@ -333,7 +330,7 @@ class AdminController extends AbstractController
         return $this->render('admin/subCategory.html.twig', [
             'form' => $form->createView(),
             'subCategories' => $subCategories,
-            'titre' => 'Gestion catégories'
+            'titre' => 'Gestion sous-catégories'
 
 
         ]);

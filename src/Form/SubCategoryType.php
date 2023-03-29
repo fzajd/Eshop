@@ -18,7 +18,7 @@ class SubCategoryType extends AbstractType
                 'required'=>false,
                 'label'=>false,
                 'attr'=>[
-                    'placeholder'=> 'saisissez le nom de la catégorie'
+                    'placeholder'=> 'saisissez le nom de la sous-catégorie'
                 ]
             ])
             ->add('Enregistrer', SubmitType::class)

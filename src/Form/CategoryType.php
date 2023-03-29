@@ -20,17 +20,11 @@ class CategoryType extends AbstractType
                 'label'=>false,
                 'required'=>false,
                 'attr'=>[
-                    'placeholder'=>'Saisissez le nom de la sous-catégorie',
+                    'placeholder'=>'Saisissez le nom de la catégorie',
 
                 ]
             ])
-            ->add('subCategory', EntityType::class,[
-                'label'=>false,
-                'required'=>false,
-                'placeholder'=>'Selectionnez une catégorie en relation',
-                'class'=>SubCategory::class,
-                'choice_label'=>'title'
-            ])
+
             ->add('Enregistrer', SubmitType::class)
         ;
     }
